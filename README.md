@@ -52,8 +52,37 @@ understand UV risks and adopt sun-safe behaviours.
 
 ---
 
+##  Project Structure
+
+FIT5120-Sun-Safety/
+├── frontend/          ← React app
+│   ├── src/
+│   │   ├── components/   ← reusable UI pieces
+│   │   ├── pages/        ← each screen/page
+│   │   ├── services/     ← API call functions
+│   │   └── assets/       ← images, icons
+│   ├── public/
+│   └── package.json
+│
+├── backend/           ← Flask app
+│   ├── app/
+│   │   ├── routes/       ← API endpoints
+│   │   ├── models/       ← database models
+│   │   ├── services/     ← business logic
+│   │   └── data/         ← AIHW CSV files
+│   ├── tests/            ← unit tests
+│   ├── requirements.txt  ← Python dependencies
+│   └── run.py            ← entry point
+│
+├── .gitignore
+├── README.md
+└── docker-compose.yml
+
+---
+
 ## Academic Project
 This project was developed as part of FIT5120 
 Industry Experience Studio at Monash University, 2026. 
 Not licensed for commercial use.
+---
 ```
