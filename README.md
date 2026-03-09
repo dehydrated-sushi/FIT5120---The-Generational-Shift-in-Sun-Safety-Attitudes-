@@ -56,26 +56,69 @@ understand UV risks and adopt sun-safe behaviours.
 
 ```
 FIT5120-Sun-Safety/
-├── frontend/          ← React app
+├── frontend/                    ← React app
 │   ├── src/
-│   │   ├── components/   ← reusable UI pieces
-│   │   ├── pages/        ← each screen/page
-│   │   ├── services/     ← API call functions
-│   │   └── assets/       ← images, icons
+│   │   ├── components/          ← reusable UI pieces
+│   │   │   ├── UVAlert/
+│   │   │   ├── Charts/
+│   │   │   └── ClothingCard/
+│   │   ├── pages/               ← each screen
+│   │   │   ├── Home/
+│   │   │   ├── UVTracker/
+│   │   │   ├── Awareness/
+│   │   │   └── Prevention/
+│   │   ├── services/            ← API call functions
+│   │   │   ├── uvService.js
+│   │   │   └── dataService.js
+│   │   ├── hooks/               ← custom React hooks
+│   │   ├── context/             ← global state
+│   │   ├── utils/               ← helper functions
+│   │   ├── assets/              ← images, icons
+│   │   └── styles/              ← global CSS
 │   ├── public/
+│   ├── .env.example             ← environment variables template
 │   └── package.json
 │
-├── backend/           ← Flask app
+├── backend/                     ← Flask app
 │   ├── app/
-│   │   ├── routes/       ← API endpoints
-│   │   ├── models/       ← database models
-│   │   ├── services/     ← business logic
-│   │   └── data/         ← AIHW CSV files
-│   ├── tests/            ← unit tests
-│   ├── requirements.txt  ← Python dependencies
-│   └── run.py            ← entry point
+│   │   ├── routes/              ← API endpoints
+│   │   │   ├── uv_routes.py
+│   │   │   ├── cancer_routes.py
+│   │   │   └── clothing_routes.py
+│   │   ├── models/              ← database models
+│   │   │   ├── uv_reading.py
+│   │   │   └── cancer_data.py
+│   │   ├── services/            ← business logic
+│   │   │   ├── uv_service.py
+│   │   │   └── clothing_service.py
+│   │   ├── data/                ← AIHW CSV files
+│   │   └── __init__.py
+│   ├── database/
+│   │   ├── migrations/          ← database version control
+│   │   ├── seeds/               ← initial data scripts
+│   │   │   └── import_aihw.py   ← imports CSV to PostgreSQL
+│   │   └── schema.sql           ← table definitions
+│   ├── tests/
+│   │   ├── test_uv_routes.py
+│   │   ├── test_cancer_routes.py
+│   │   └── test_clothing_routes.py
+│   ├── config.py                ← app configuration
+│   ├── requirements.txt         ← Python dependencies
+│   └── run.py                   ← entry point
+│
+├── docs/                        ← project documentation
+│   ├── analysis-design-report.pdf
+│   ├── tech-stack-decision.md
+│   ├── data-sources.md
+│   └── diagrams/
+│       └── tech-stack-diagram.png
+│
+├── .github/
+│   └── workflows/               ← CI/CD automation
+│       └── deploy.yml
 │
 ├── .gitignore
+├── .env.example                 ← environment variables template
 ├── README.md
 └── docker-compose.yml
 ```
