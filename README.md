@@ -6,7 +6,7 @@ understand UV risks and adopt sun-safe behaviours.
 
 ---
 
-## 📋 Documentation
+##  Documentation
 | Document | Link |
 |---|---|
 | Analysis & Design Report | [View](#) |
