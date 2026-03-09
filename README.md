@@ -125,9 +125,9 @@ FIT5120-Sun-Safety/
 
 ---
 
-## Academic Project
+### Academic Project
 This project was developed as part of FIT5120 
 Industry Experience Studio at Monash University, 2026. 
 Not licensed for commercial use.
 ---
-```
+
