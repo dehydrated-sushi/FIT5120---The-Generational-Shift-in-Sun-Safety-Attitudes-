@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIT5120 — Tech Stack & Data Sources</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f0ede8;--ink:#1a1614;--muted:#7a7169;--line:#d4cfc8;--surface:#e8e4de;--surface2:#ffffff;--blue:#2a5ce6;--cyan:#0891b2;--orange:#c2500a;--green:#1a7a4a;--yellow:#b07d10;--purple:#6d28d9;--pg:#336791;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--ink);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:999;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:0.35;}
+.progress-bar{position:fixed;top:0;left:0;height:2.5px;background:linear-gradient(90deg,var(--blue),var(--cyan));z-index:1000;width:0%;}
+
+/* TAB BAR */
+.tab-bar{position:sticky;top:0;z-index:500;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:stretch;padding:0 clamp(24px,8vw,120px);}
+.tab-btn{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;padding:18px 0;margin-right:40px;background:none;border:none;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;transition:color 0.2s,border-color 0.2s;position:relative;top:1px;}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
+.tab-btn:hover{color:var(--ink);}
+
+/* PAGES */
+.page{display:none;}.page.active{display:block;}
+
+/* NAV DOTS */
+.nav-dots{position:fixed;right:20px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:100;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--line);border:none;cursor:pointer;padding:0;transition:background 0.2s,transform 0.2s;}
+.nav-dot.active{background:var(--blue);transform:scale(1.5);}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:80px clamp(24px,8vw,120px);position:relative;overflow:hidden;border-bottom:1px solid var(--line);}
+.hero-grid-bg{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:60px 60px;opacity:0.5;mask-image:radial-gradient(ellipse 80% 80% at 80% 50%,black 20%,transparent 70%);}
+.hero-orbit{position:absolute;right:clamp(40px,10vw,160px);top:50%;transform:translateY(-50%);width:340px;height:340px;pointer-events:none;}
+.orbit-ring{position:absolute;border-radius:50%;border:1px solid var(--line);top:50%;left:50%;transform:translate(-50%,-50%);}
+.orbit-ring:nth-child(1){width:110px;height:110px;border-color:rgba(42,92,230,0.3);animation:spin 12s linear infinite;}
+.orbit-ring:nth-child(2){width:200px;height:200px;animation:spin 20s linear infinite reverse;}
+.orbit-ring:nth-child(3){width:310px;height:310px;animation:spin 34s linear infinite;}
+.orbit-dot{position:absolute;border-radius:50%;top:50%;left:50%;}
+.orbit-dot:nth-child(4){width:10px;height:10px;background:var(--blue);margin:-5px 0 0 50px;box-shadow:0 0 14px var(--blue);animation:spin 12s linear infinite;transform-origin:-50px 5px;}
+.orbit-dot:nth-child(5){width:8px;height:8px;background:var(--orange);margin:-4px 0 0 96px;box-shadow:0 0 12px var(--orange);animation:spin 20s linear infinite reverse;transform-origin:-96px 4px;}
+.orbit-dot:nth-child(6){width:8px;height:8px;background:var(--pg);margin:-4px 0 0 151px;box-shadow:0 0 12px var(--pg);animation:spin 34s linear infinite;transform-origin:-151px 4px;}
+.orbit-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;background:var(--blue);box-shadow:0 0 40px rgba(42,92,230,0.35);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:white;letter-spacing:0.05em;text-align:center;line-height:1.4;}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.hero-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--blue);margin-bottom:20px;opacity:0;animation:revealUp 0.7s ease 0.1s both;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(42px,7vw,86px);font-weight:900;line-height:1.0;letter-spacing:-0.02em;max-width:680px;opacity:0;animation:revealUp 0.8s ease 0.25s both;}
+.hero h1 em{font-style:italic;color:var(--blue);}
+.hero-sub{margin-top:28px;max-width:480px;font-size:16px;line-height:1.75;color:var(--muted);font-weight:300;opacity:0;animation:revealUp 0.8s ease 0.45s both;}
+.hero-tags{display:flex;gap:10px;flex-wrap:wrap;margin-top:36px;opacity:0;animation:revealUp 0.7s ease 0.6s both;}
+.hero-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--surface2);letter-spacing:0.05em;}
+@keyframes revealUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+/* SECTIONS */
+.section,.content-section{padding:clamp(60px,8vw,100px) clamp(24px,8vw,120px);border-bottom:1px solid var(--line);position:relative;overflow:hidden;}
+.section-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:40px;display:flex;align-items:center;gap:14px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--line);}
+.s-number{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;margin-bottom:10px;}
+.content-section h2{font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);font-weight:700;letter-spacing:-0.02em;margin-bottom:24px;line-height:1.15;}
+
+/* DIAGRAM */
+.diagram-wrap{display:flex;flex-direction:column;align-items:center;gap:0;max-width:700px;margin:0 auto;}
+.d-node{position:relative;border-radius:14px;padding:20px 40px;min-width:260px;text-align:center;border:1.5px solid var(--line);background:var(--surface2);transition:transform 0.25s ease,box-shadow 0.25s ease;cursor:default;}
+.d-node:hover{transform:translateY(-4px);}
+.d-node .d-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:5px;}
+.d-node .d-label{font-size:17px;font-weight:500;}
+.d-node .d-sub{font-size:12px;color:var(--muted);margin-top:3px;font-weight:300;}
+.d-node.user{border-color:var(--cyan);}.d-node.user .d-tag{color:var(--cyan);}
+.d-node.react{border-color:var(--blue);}.d-node.react .d-tag{color:var(--blue);}
+.d-node.flask{border-color:var(--green);}.d-node.flask .d-tag{color:var(--green);}
+.d-node.owm{border-color:var(--orange);}.d-node.owm .d-tag{color:var(--orange);}
+.d-node.pg{border-color:var(--pg);}.d-node.pg .d-tag{color:var(--pg);}
+.d-node.recharts{border-color:var(--blue);}.d-node.recharts .d-tag{color:var(--blue);}
+.d-arrow{display:flex;flex-direction:column;align-items:center;height:44px;justify-content:center;}
+.d-arrow .al{width:1.5px;flex:1;background:var(--line);}
+.d-arrow .ah{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--line);}
+.d-fork{display:flex;flex-direction:column;align-items:center;width:100%;}
+.d-fork-stem{width:1.5px;height:28px;background:var(--line);}
+.d-fork-bar{position:relative;width:340px;display:flex;}
+.d-fork-bar::before{content:'';position:absolute;top:0;left:0;right:0;height:1.5px;background:var(--line);}
+.d-fork-branch{flex:1;display:flex;flex-direction:column;align-items:center;}
+.d-fork-branch .bl{width:1.5px;height:32px;background:var(--line);}
+.d-fork-branch .bh{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--line);}
+.d-row{display:flex;gap:32px;justify-content:center;}
+.d-merge{display:flex;flex-direction:column;align-items:center;width:100%;}
+.d-merge-row{position:relative;display:flex;width:340px;height:36px;align-items:flex-end;}
+.d-merge-row::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1.5px;background:var(--line);}
+.d-merge-branch{flex:1;display:flex;justify-content:center;}
+.d-merge-branch .ml{width:1.5px;height:36px;background:var(--line);}
+.d-merge-stem{display:flex;flex-direction:column;align-items:center;}
+.d-merge-stem .sl{width:1.5px;height:28px;background:var(--line);}
+.d-merge-stem .sh{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--line);}
+
+/* VIS BOX */
+.vis-box{width:100%;border-radius:12px;border:1.5px solid var(--line);background:var(--surface2);overflow:hidden;margin-top:32px;}
+.vis-box-header{padding:12px 18px;border-bottom:1px solid var(--line);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);}
+.vis-box canvas{display:block;width:100%;}
+
+/* OVERVIEW */
+.overview-band{background:var(--surface);border-radius:16px;padding:28px 32px;margin-top:24px;max-width:700px;border-left:3px solid var(--blue);}
+.overview-band p{font-size:15px;line-height:1.8;color:var(--ink);font-weight:300;}
+.overview-band p+p{margin-top:12px;}
+
+/* STACK CARDS */
+.stack-card{margin-top:20px;border:1.5px solid var(--line);border-radius:14px;padding:24px 28px;background:var(--surface2);}
+.stack-card .sc-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;}
+.stack-card p{font-size:15px;line-height:1.8;font-weight:300;color:var(--ink);}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;max-width:980px;}
+.col-visual{border-radius:14px;overflow:hidden;border:1.5px solid var(--line);background:var(--surface2);padding:20px;}
+.col-visual .cv-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.col-visual canvas{display:block;width:100%;border-radius:8px;border:1px solid var(--line);background:var(--surface);}
+
+/* COMPARE */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px;max-width:860px;}
+.compare-card{border:1.5px solid var(--line);border-radius:14px;padding:28px 32px;background:var(--surface2);transition:transform 0.2s,box-shadow 0.2s;}
+.compare-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.06);}
+.compare-card .card-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.compare-card h3{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:16px;}
+.compare-card.chosen{border-color:var(--blue);}.compare-card.chosen h3{color:var(--blue);}
+.compare-card.chosen2{border-color:var(--green);}.compare-card.chosen2 h3{color:var(--green);}
+.reason-list{list-style:none;display:flex;flex-direction:column;gap:11px;}
+.reason-list li{font-size:14px;line-height:1.65;font-weight:300;padding-left:18px;position:relative;}
+.reason-list li::before{content:'';position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--line);}
+.compare-card.chosen .reason-list li::before{background:var(--blue);}
+.compare-card.chosen2 .reason-list li::before{background:var(--green);}
+
+/* TOOLS GRID */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:32px;max-width:980px;}
+.tool-card{border:1.5px solid var(--line);border-radius:14px;padding:24px 26px;background:var(--surface2);transition:transform 0.2s,box-shadow 0.2s;position:relative;overflow:hidden;}
+.tool-card:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,0.07);}
+.tool-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;}
+.tool-card.t-pg::before{background:var(--pg);}
+.tool-card.t-owm::before{background:var(--orange);}
+.tool-card.t-recharts::before{background:var(--blue);}
+.tool-card.t-vercel::before{background:var(--ink);}
+.tool-card.t-framer::before{background:var(--purple);}
+.tool-card.t-aos::before{background:var(--cyan);}
+.tool-card .t-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px;}
+.tool-card .t-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);display:inline-block;margin-bottom:14px;}
+.tool-card p{font-size:13px;line-height:1.7;color:var(--muted);font-weight:300;}
+.tool-card .t-vis{margin-top:16px;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:var(--surface);}
+.tool-card .t-vis canvas{display:block;width:100%;}
+
+/* DATA SOURCES PAGE */
+.ds-hero{min-height:60vh;display:flex;flex-direction:column;justify-content:center;padding:80px clamp(24px,8vw,120px);position:relative;overflow:hidden;border-bottom:1px solid var(--line);}
+.ds-hero-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:60px 60px;opacity:0.4;mask-image:radial-gradient(ellipse 100% 100% at 0% 50%,black 20%,transparent 75%);}
+.ds-hero-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--green);margin-bottom:20px;opacity:0;animation:revealUp 0.7s ease 0.1s both;}
+.ds-hero h1{font-family:'Playfair Display',serif;font-size:clamp(38px,6vw,76px);font-weight:900;line-height:1.0;letter-spacing:-0.02em;max-width:680px;opacity:0;animation:revealUp 0.8s ease 0.25s both;}
+.ds-hero h1 em{font-style:italic;color:var(--green);}
+.ds-hero-sub{margin-top:24px;max-width:560px;font-size:16px;line-height:1.75;color:var(--muted);font-weight:300;opacity:0;animation:revealUp 0.8s ease 0.4s both;}
+.ds-stats{display:flex;gap:32px;flex-wrap:wrap;margin-top:40px;opacity:0;animation:revealUp 0.7s ease 0.55s both;}
+.ds-stat .ds-stat-num{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:var(--green);line-height:1;}
+.ds-stat .ds-stat-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+.ds-overview{padding:clamp(48px,6vw,80px) clamp(24px,8vw,120px);border-bottom:1px solid var(--line);}
+.ds-overview-band{background:var(--surface);border-radius:16px;padding:28px 32px;max-width:800px;border-left:3px solid var(--green);}
+.ds-overview-band p{font-size:15px;line-height:1.8;color:var(--ink);font-weight:300;}
+.sources-section{padding:clamp(48px,6vw,80px) clamp(24px,8vw,120px);border-bottom:1px solid var(--line);}
+.sources-section .sec-head{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:40px;display:flex;align-items:center;gap:14px;}
+.sources-section .sec-head::after{content:'';flex:1;height:1px;background:var(--line);}
+.source-card{border:1.5px solid var(--line);border-radius:16px;background:var(--surface2);overflow:hidden;margin-bottom:20px;transition:transform 0.2s,box-shadow 0.2s;}
+.source-card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.07);}
+.source-card-inner{display:grid;grid-template-columns:64px 1fr;align-items:stretch;}
+.source-card-accent{display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:500;color:white;writing-mode:vertical-rl;letter-spacing:0.1em;padding:20px 0;}
+.source-card-body{padding:24px 28px;border-left:1px solid var(--line);}
+.source-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:12px;}
+.source-card-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;line-height:1.2;flex:1;}
+.source-badges{display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0;}
+.source-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:4px 12px;border-radius:999px;border:1px solid currentColor;white-space:nowrap;}
+.source-meta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:16px;}
+.source-meta-item .meta-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.source-meta-item .meta-value{font-size:13px;font-weight:400;line-height:1.5;color:var(--ink);}
+.source-link{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:8px 16px;border-radius:8px;border:1.5px solid var(--line);color:var(--muted);text-decoration:none;transition:border-color 0.2s,color 0.2s;margin-top:4px;}
+.source-link:hover{border-color:var(--blue);color:var(--blue);}
+.sc-aihw .source-card-accent{background:var(--green);}.sc-aihw .source-card-title,.sc-aihw .source-badge{color:var(--green);}.sc-aihw .source-badge{border-color:var(--green);}
+.sc-owm .source-card-accent{background:var(--orange);}.sc-owm .source-card-title,.sc-owm .source-badge{color:var(--orange);}.sc-owm .source-badge{border-color:var(--orange);}
+.sc-arpansa .source-card-accent{background:var(--blue);}.sc-arpansa .source-card-title,.sc-arpansa .source-badge{color:var(--blue);}.sc-arpansa .source-badge{border-color:var(--blue);}
+.sc-github .source-card-accent{background:var(--ink);}.sc-github .source-card-title,.sc-github .source-badge{color:var(--ink);}.sc-github .source-badge{border-color:var(--ink);}
+.sc-abs .source-card-accent{background:var(--purple);}.sc-abs .source-card-title,.sc-abs .source-badge{color:var(--purple);}.sc-abs .source-badge{border-color:var(--purple);}
+.ds-legend{padding:clamp(48px,6vw,80px) clamp(24px,8vw,120px);border-bottom:1px solid var(--line);}
+.legend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:28px;max-width:900px;}
+.legend-item{border:1.5px solid var(--line);border-radius:12px;padding:18px 20px;background:var(--surface2);display:flex;align-items:flex-start;gap:14px;}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.legend-name{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.05em;margin-bottom:4px;}
+.legend-desc{font-size:12px;color:var(--muted);font-weight:300;line-height:1.5;}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-children > *{opacity:0;transform:translateY(22px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal-children.visible > *:nth-child(1){opacity:1;transform:none;transition-delay:0s;}
+.reveal-children.visible > *:nth-child(2){opacity:1;transform:none;transition-delay:0.1s;}
+.reveal-children.visible > *:nth-child(3){opacity:1;transform:none;transition-delay:0.2s;}
+.reveal-children.visible > *:nth-child(4){opacity:1;transform:none;transition-delay:0.3s;}
+.reveal-children.visible > *:nth-child(5){opacity:1;transform:none;transition-delay:0.4s;}
+.reveal-children.visible > *:nth-child(6){opacity:1;transform:none;transition-delay:0.5s;}
+.reveal-children.visible > *:nth-child(7){opacity:1;transform:none;transition-delay:0.6s;}
+.reveal-children.visible > *:nth-child(8){opacity:1;transform:none;transition-delay:0.7s;}
+.reveal-children.visible > *:nth-child(9){opacity:1;transform:none;transition-delay:0.8s;}
+.reveal-children.visible > *:nth-child(10){opacity:1;transform:none;transition-delay:0.9s;}
+
+footer{padding:40px clamp(24px,8vw,120px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;border-top:1px solid var(--line);}
+footer .f-left{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.1em;}
+footer .f-tags{display:flex;gap:8px;flex-wrap:wrap;}
+footer .f-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);color:var(--muted);}
+@media(max-width:700px){.two-col,.compare-grid{grid-template-columns:1fr;}.hero-orbit,.nav-dots{display:none;}.source-card-inner{grid-template-columns:1fr;}.source-card-accent{writing-mode:horizontal-tb;padding:14px 20px;font-size:12px;}}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab1" onclick="switchTab(1)">Tech Stack</button>
+  <button class="tab-btn" id="tab2" onclick="switchTab(2)">Data Sources</button>
+</div>
+
+<nav class="nav-dots" id="dotsPage1">
+  <button class="nav-dot active" data-target="hero"></button>
+  <button class="nav-dot" data-target="sec-diagram"></button>
+  <button class="nav-dot" data-target="sec-overview"></button>
+  <button class="nav-dot" data-target="sec-react"></button>
+  <button class="nav-dot" data-target="sec-flask"></button>
+  <button class="nav-dot" data-target="sec-compare"></button>
+  <button class="nav-dot" data-target="sec-tools"></button>
+</nav>
+<nav class="nav-dots" id="dotsPage2" style="display:none;">
+  <button class="nav-dot active" data-target2="ds-hero"></button>
+  <button class="nav-dot" data-target2="ds-overview"></button>
+  <button class="nav-dot" data-target2="ds-aihw"></button>
+  <button class="nav-dot" data-target2="ds-other"></button>
+  <button class="nav-dot" data-target2="ds-legend"></button>
+</nav>
+
+<!-- ======================== PAGE 1: TECH STACK ======================== -->
+<div class="page active" id="page1">
+
+<section class="hero" id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-orbit">
+    <div class="orbit-ring"></div><div class="orbit-ring"></div><div class="orbit-ring"></div>
+    <div class="orbit-dot"></div><div class="orbit-dot"></div><div class="orbit-dot"></div>
+    <div class="orbit-center">UV<br>APP</div>
+  </div>
+  <div class="hero-eyebrow">FIT5120 &nbsp;/&nbsp; Onboarding Iteration</div>
+  <h1>Tech Stack<br><em>Architecture</em></h1>
+  <p class="hero-sub">A high-level walkthrough of the technology decisions powering our UV awareness web application for young Australians.</p>
+  <div class="hero-tags">
+    <span class="hero-tag">React</span><span class="hero-tag">Flask / Python</span>
+    <span class="hero-tag">PostgreSQL</span><span class="hero-tag">OpenWeatherMap</span>
+    <span class="hero-tag">Recharts</span><span class="hero-tag">Vercel</span>
+    <span class="hero-tag">Framer Motion</span><span class="hero-tag">AOS</span>
+  </div>
+</section>
+
+<section class="section" id="sec-diagram">
+  <div class="section-label">System Architecture</div>
+  <div class="diagram-wrap reveal-children">
+    <div class="d-node user"><div class="d-tag">Entry Point</div><div class="d-label">User (Browser)</div><div class="d-sub">Desktop and mobile web</div></div>
+    <div class="d-arrow"><div class="al"></div><div class="ah"></div></div>
+    <div class="d-node react"><div class="d-tag">Frontend / Vercel</div><div class="d-label">React</div><div class="d-sub">UI components, routing, state management</div></div>
+    <div class="d-arrow"><div class="al"></div><div class="ah"></div></div>
+    <div class="d-node flask"><div class="d-tag">Backend / Python</div><div class="d-label">Flask API</div><div class="d-sub">Business logic, data processing, SQLAlchemy ORM</div></div>
+    <div class="d-fork">
+      <div class="d-fork-stem"></div>
+      <div class="d-fork-bar">
+        <div class="d-fork-branch"><div class="bl"></div><div class="bh"></div></div>
+        <div class="d-fork-branch"><div class="bl"></div><div class="bh"></div></div>
+      </div>
+    </div>
+    <div class="d-row">
+      <div class="d-node owm"><div class="d-tag">External API</div><div class="d-label">OpenWeatherMap</div><div class="d-sub">Live UV index data</div></div>
+      <div class="d-node pg"><div class="d-tag">Database / PostgreSQL</div><div class="d-label">PostgreSQL</div><div class="d-sub">AIHW datasets, location data</div></div>
+    </div>
+    <div class="d-merge">
+      <div class="d-merge-row"><div class="d-merge-branch"><div class="ml"></div></div><div class="d-merge-branch"><div class="ml"></div></div></div>
+      <div class="d-merge-stem"><div class="sl"></div><div class="sh"></div></div>
+    </div>
+    <div class="d-node recharts"><div class="d-tag">Frontend / Visualisation</div><div class="d-label">React + Recharts</div><div class="d-sub">Dynamic charts, UV visualisations, recommendations</div></div>
+  </div>
+  <div class="vis-box reveal" style="max-width:700px;margin:48px auto 0;">
+    <div class="vis-box-header">Live Data Flow Simulation</div>
+    <canvas id="flowCanvas" height="110"></canvas>
+  </div>
+</section>
+
+<section class="content-section" id="sec-overview">
+  <div class="s-number reveal">01 / Overview</div>
+  <h2 class="reveal" style="font-family:'Playfair Display',serif;font-size:clamp(28px,4vw,44px);font-weight:700;letter-spacing:-0.02em;margin-bottom:24px;">Why This Stack</h2>
+  <div class="overview-band reveal">
+    <p>For this project we chose React as the frontend framework and Flask (Python) as the backend, connected to a PostgreSQL database and the OpenWeatherMap API for live UV data.</p>
+    <p>This combination was selected because it allows us to build a fast, interactive web app that can handle real-time data, dynamic visualisations, and user-specific inputs like location and skin tone, without overcomplicating the architecture for a three-week build.</p>
+  </div>
+  <div class="vis-box reveal" style="max-width:700px;margin-top:28px;">
+    <div class="vis-box-header">Request Lifecycle</div>
+    <canvas id="overviewCanvas" height="80"></canvas>
+  </div>
+</section>
+
+<section class="content-section" id="sec-react">
+  <div class="s-number reveal">02 / Frontend</div>
+  <div class="two-col">
+    <div>
+      <h2 class="reveal">React</h2>
+      <div class="stack-card reveal"><div class="sc-tag" style="color:var(--blue)">What it is</div><p>React is a JavaScript library for building user interfaces through reusable components.</p></div>
+      <div class="stack-card reveal" style="border-color:var(--blue)"><div class="sc-tag" style="color:var(--blue)">Why we chose it</div><p>Our app has multiple interactive features (UV alerts, visualisations, clothing recommendations) that each need to update dynamically based on user input and live data. React handles this cleanly without reloading the page, making the experience feel fast and responsive for our target audience of young Australians.</p></div>
+    </div>
+    <div class="col-visual reveal"><div class="cv-label">Component Tree</div><canvas id="reactCanvas" height="240"></canvas></div>
+  </div>
+</section>
+
+<section class="content-section" id="sec-flask">
+  <div class="s-number reveal">03 / Backend</div>
+  <div class="two-col">
+    <div>
+      <h2 class="reveal">Flask (Python)</h2>
+      <div class="stack-card reveal"><div class="sc-tag" style="color:var(--green)">What it is</div><p>Flask is a lightweight Python web framework used to build APIs and server-side logic.</p></div>
+      <div class="stack-card reveal" style="border-color:var(--green)"><div class="sc-tag" style="color:var(--green)">Why we chose it</div><p>Our team has stronger Python experience than JavaScript backend, and Flask is simple to set up for a project of this scope. It handles API calls to OpenWeatherMap, processes UV data, queries the PostgreSQL database via SQLAlchemy, and serves responses to the frontend without the overhead of a heavier framework.</p></div>
+    </div>
+    <div class="col-visual reveal"><div class="cv-label">API Request Simulation</div><canvas id="flaskCanvas" height="240"></canvas></div>
+  </div>
+</section>
+
+<section class="content-section" id="sec-compare">
+  <div class="s-number reveal">04 / Decision Rationale</div>
+  <h2 class="reveal">Why These<br><em>Over the Alternatives</em></h2>
+  <div class="compare-grid reveal-children">
+    <div class="compare-card chosen"><div class="card-title">Chosen / Frontend</div><h3>React</h3>
+      <ul class="reason-list">
+        <li>Dynamic content (UV levels, charts, clothing recommendations) updates based on user location without extra JS complexity.</li>
+        <li>Component-based structure lets each feature be built and tested independently, suiting parallel teamwork.</li>
+        <li>Large ecosystem of libraries like Recharts plug directly in, saving build time.</li>
+        <li>Produces a single-page app experience natural for a mobile-first young audience.</li>
+      </ul>
+    </div>
+    <div class="compare-card" style="background:var(--surface)"><div class="card-title">Not chosen / Frontend</div><h3 style="color:var(--muted)">Plain HTML / CSS</h3>
+      <ul class="reason-list">
+        <li>Cannot handle dynamic content without significant extra JavaScript complexity.</li>
+        <li>No built-in component model makes parallel development harder.</li>
+        <li>Lacks access to modern visualisation libraries without significant wiring.</li>
+        <li>Would not produce a natural single-page app experience for mobile users.</li>
+      </ul>
+    </div>
+    <div class="compare-card chosen2"><div class="card-title">Chosen / Backend</div><h3>Flask</h3>
+      <ul class="reason-list">
+        <li>Team is more proficient in Python, reducing onboarding time during a three-week sprint.</li>
+        <li>Lightweight with minimal setup, suited to the scope of this iteration.</li>
+        <li>Python has strong data handling libraries for processing AIHW cancer datasets.</li>
+        <li>Integrates cleanly with PostgreSQL via SQLAlchemy and external APIs without unnecessary complexity.</li>
+      </ul>
+    </div>
+    <div class="compare-card" style="background:var(--surface)"><div class="card-title">Not chosen / Backend</div><h3 style="color:var(--muted)">Node.js</h3>
+      <ul class="reason-list">
+        <li>Team would require additional ramp-up time on JavaScript backend patterns.</li>
+        <li>More configuration overhead for a small-scope three-week project.</li>
+        <li>Python data libraries like pandas are not available in the Node ecosystem.</li>
+        <li>No meaningful performance advantage for this scale of application.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="content-section" id="sec-tools">
+  <div class="s-number reveal">05 / Other Tools</div>
+  <h2 class="reveal">Supporting<br><em>Technologies</em></h2>
+  <div class="tools-grid reveal-children">
+    <div class="tool-card t-pg">
+      <div class="t-name">PostgreSQL</div><span class="t-badge">Database</span>
+      <p>Relational database used to store and retrieve static datasets including AIHW cancer incidence and mortality data, and location reference data. Chosen for its reliability, structured query support, and compatibility with Flask via SQLAlchemy.</p>
+      <div class="t-vis"><canvas id="pgCanvas" height="70"></canvas></div>
+    </div>
+    <div class="tool-card t-owm"><div class="t-name">OpenWeatherMap</div><span class="t-badge">External API</span><p>Provides real-time UV index data based on the user's location, used to power UV alerts and clothing recommendations.</p><div class="t-vis"><canvas id="owmCanvas" height="70"></canvas></div></div>
+    <div class="tool-card t-recharts"><div class="t-name">Recharts</div><span class="t-badge">Visualisation</span><p>A React-compatible charting library used to render skin cancer incidence and UV trend visualisations cleanly within the frontend.</p><div class="t-vis"><canvas id="rechartsCanvas" height="70"></canvas></div></div>
+    <div class="tool-card t-vercel"><div class="t-name">Vercel</div><span class="t-badge">Hosting</span><p>Hosts the React frontend, providing fast deployment and a live public URL for mentor review and user testing.</p><div class="t-vis"><canvas id="vercelCanvas" height="70"></canvas></div></div>
+    <div class="tool-card t-framer"><div class="t-name">Framer Motion</div><span class="t-badge">Animation — TBC</span><p>A React animation library for page transitions and UI animations. Final decision on usage to be confirmed during development.</p><div class="t-vis"><canvas id="framerCanvas" height="70"></canvas></div></div>
+    <div class="tool-card t-aos"><div class="t-name">AOS</div><span class="t-badge">Scroll Animation — TBC</span><p>Lightweight scroll animation library. Being considered as an alternative to Framer Motion depending on implementation needs.</p><div class="t-vis"><canvas id="aosCanvas" height="70"></canvas></div></div>
+  </div>
+</section>
+
+<footer>
+  <div class="f-left">FIT5120 &nbsp;/&nbsp; Onboarding Iteration &nbsp;/&nbsp; Tech Stack</div>
+  <div class="f-tags"><span class="f-tag">React</span><span class="f-tag">Flask</span><span class="f-tag">PostgreSQL</span><span class="f-tag">OpenWeatherMap</span><span class="f-tag">Recharts</span><span class="f-tag">Vercel</span></div>
+</footer>
+</div>
+
+<!-- ======================== PAGE 2: DATA SOURCES ======================== -->
+<div class="page" id="page2">
+
+<section class="ds-hero" id="ds-hero">
+  <div class="ds-hero-grid"></div>
+  <div class="ds-hero-eyebrow">FIT5120 &nbsp;/&nbsp; Onboarding Iteration</div>
+  <h1>Data<br><em>Sources</em></h1>
+  <p class="ds-hero-sub">All datasets and APIs used across the three Must Have user stories. All sources are publicly available and used in accordance with their respective licenses.</p>
+  <div class="ds-stats">
+    <div class="ds-stat"><div class="ds-stat-num">8</div><div class="ds-stat-label">Data Sources</div></div>
+    <div class="ds-stat"><div class="ds-stat-num">4</div><div class="ds-stat-label">AIHW Datasets</div></div>
+    <div class="ds-stat"><div class="ds-stat-num">3</div><div class="ds-stat-label">Licenses</div></div>
+    <div class="ds-stat"><div class="ds-stat-num">2</div><div class="ds-stat-label">User Stories</div></div>
+  </div>
+</section>
+
+<section class="ds-overview" id="ds-overview">
+  <div class="ds-overview-band reveal">
+    <p>The following datasets and APIs are used across the three Must Have user stories in this iteration. All sources are publicly available and used in accordance with their respective licenses.</p>
+  </div>
+</section>
+
+<section class="sources-section" id="ds-aihw">
+  <div class="sec-head">AIHW Datasets &nbsp;/&nbsp; Cancer Data</div>
+  <div class="reveal-children">
+
+    <div class="source-card sc-aihw">
+      <div class="source-card-inner">
+        <div class="source-card-accent">01</div>
+        <div class="source-card-body">
+          <div class="source-card-top"><div class="source-card-title">Cancer Incidence in Australia 1982–2017</div><div class="source-badges"><span class="source-badge">AIHW</span><span class="source-badge" style="color:var(--muted);border-color:var(--line)">CC BY 3.0 AU</span></div></div>
+          <div class="source-meta-grid">
+            <div class="source-meta-item"><div class="meta-label">Used for</div><div class="meta-value">US2.1 — Visualisations of skin cancer incidence trends over time</div></div>
+            <div class="source-meta-item"><div class="meta-label">Source</div><div class="meta-value">Australian Institute of Health and Welfare</div></div>
+            <div class="source-meta-item"><div class="meta-label">License</div><div class="meta-value">Creative Commons Attribution 3.0 Australia</div></div>
+            <div class="source-meta-item"><div class="meta-label">Format</div><div class="meta-value">XLSX — loaded into PostgreSQL</div></div>
+          </div>
+          <a class="source-link" href="https://www.aihw.gov.au/getmedia/e8779760-1b3c-4c2e-a6c2-b0a8d764c66b/AIHW-CAN-122-CDiA-2021-Book-1a-Cancer-incidence-age-standardised-rates-5-year-age-groups.xlsx.aspx" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Access Dataset</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="source-card sc-aihw">
+      <div class="source-card-inner">
+        <div class="source-card-accent">02</div>
+        <div class="source-card-body">
+          <div class="source-card-top"><div class="source-card-title">Cancer Mortality in Australia 1982–2017</div><div class="source-badges"><span class="source-badge">AIHW</span><span class="source-badge" style="color:var(--muted);border-color:var(--line)">CC BY 3.0 AU</span></div></div>
+          <div class="source-meta-grid">
+            <div class="source-meta-item"><div class="meta-label">Used for</div><div class="meta-value">US2.1 — Visualisations of skin cancer mortality trends over time</div></div>
+            <div class="source-meta-item"><div class="meta-label">Source</div><div class="meta-value">Australian Institute of Health and Welfare</div></div>
+            <div class="source-meta-item"><div class="meta-label">License</div><div class="meta-value">Creative Commons Attribution 3.0 Australia</div></div>
+            <div class="source-meta-item"><div class="meta-label">Format</div><div class="meta-value">XLSX — loaded into PostgreSQL</div></div>
+          </div>
+          <a class="source-link" href="https://www.aihw.gov.au/getmedia/9f5cdd1c-87f7-4f05-9a4f-8c5141a3e17e/AIHW-CAN-122-CDiA-2021-Book-2a-Cancer-mortality-age-standardised-rates-5-year-age-groups.xlsx.aspx" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Access Dataset</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="source-card sc-aihw">
+      <div class="source-card-inner">
+        <div class="source-card-accent">03</div>
+        <div class="source-card-body">
+          <div class="source-card-top"><div class="source-card-title">Melanoma Incidence, Mortality and Risk of Death</div><div class="source-badges"><span class="source-badge">AIHW</span><span class="source-badge" style="color:var(--muted);border-color:var(--line)">CC BY 3.0 AU</span></div></div>
+          <div class="source-meta-grid">
+            <div class="source-meta-item"><div class="meta-label">Used for</div><div class="meta-value">US2.1 — Visualisations broken down by age group and location</div></div>
+            <div class="source-meta-item"><div class="meta-label">Source</div><div class="meta-value">Australian Institute of Health and Welfare</div></div>
+            <div class="source-meta-item"><div class="meta-label">License</div><div class="meta-value">Creative Commons Attribution 3.0 Australia</div></div>
+            <div class="source-meta-item"><div class="meta-label">Format</div><div class="meta-value">XLSX — loaded into PostgreSQL</div></div>
+          </div>
+          <a class="source-link" href="https://www.aihw.gov.au/getmedia/64d46e92-a612-40d4-af8f-d0dbb39fb479/AIHW-CAN-122-ACIM_melanoma.xlsx.aspx" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Access Dataset</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="source-card sc-aihw">
+      <div class="source-card-inner">
+        <div class="source-card-accent">04</div>
+        <div class="source-card-body">
+          <div class="source-card-top"><div class="source-card-title">Cancer Incidence and Mortality by State and Territory</div><div class="source-badges"><span class="source-badge">AIHW</span><span class="source-badge" style="color:var(--muted);border-color:var(--line)">CC BY 3.0 AU</span></div></div>
+          <div class="source-meta-grid">
+            <div class="source-meta-item"><div class="meta-label">Used for</div><div class="meta-value">US2.1 — Regional visualisations of skin cancer across Australia</div></div>
+            <div class="source-meta-item"><div class="meta-label">Source</div><div class="meta-value">Australian Institute of Health and Welfare</div></div>
+            <div class="source-meta-item"><div class="meta-label">License</div><div class="meta-value">Creative Commons Attribution 3.0 Australia</div></div>
+            <div class="source-meta-item"><div class="meta-label">Format</div><div class="meta-value">XLSX — loaded into PostgreSQL</div></div>
+          </div>
+          <a class="source-link" href="https://www.aihw.gov.au/getmedia/7bf64297-83e8-4079-8938-6ffdff10fab2/AIHW-CAN-122-CDiA-2021-Book-7-Cancer-incidence-and-mortality-by-state-and-territory.xlsx.aspx" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Access Dataset</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="sources-section" id="ds-other">
+  <div class="sec-head">APIs &amp; Other Sources</div>
+  <div class="reveal-children">
+
+    <div class="source-card sc-owm">
+      <div class="source-card-inner">
+        <div class="source-card-accent">05</div>
+        <div class="source-card-body">
+          <div class="source-card-top"><div class="source-card-title">UV Index — Real-Time Data</div><div class="source-badges"><span class="source-badge">OpenWeatherMap</span><span class="source-badge" style="color:var(--muted);border-color:var(--line)">CC BY-SA 4.0</span></div></div>
+          <div class="source-meta-grid">
+            <div class="source-meta-item"><div class="meta-label">Used for</div><div class="meta-value">US1.1 — Real-time UV level alerts based on user location</div></div>
+            <div class="source-meta-item"><div class="meta-label">Source</div><div class="meta-value">OpenWeatherMap API</div></div>
+            <div class="source-meta-item"><div class="meta-label">License</div><div class="meta-value">Creative Commons Attribution-ShareAlike 4.0</div></div>
+            <div class="source-meta-item"><div class="meta-label">Format</div><div class="meta-value">REST API / JSON</div></div>
+          </div>
+          <a class="source-link" href="https://openweathermap.org/api/one-call-3" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>View API Docs</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="source-card sc-arpansa">
+      <div class="source-card-inner">
+        <div class="source-card-accent">06</div>
+        <div class="source-card-body">
+          <div class="source-card-top"><div class="source-card-title">UV Index Historical Data 2016–2025</div><div class="source-badges"><span class="source-badge">ARPANSA</span><span class="source-badge" style="color:var(--muted);border-color:var(--line)">CC BY 2.5 AU</span></div></div>
+          <div class="source-meta-grid">
+            <div class="source-meta-item"><div class="meta-label">Used for</div><div class="meta-value">US2.1 — Historical UV trend visualisations across 8 Australian capital cities</div></div>
+            <div class="source-meta-item"><div class="meta-label">Source</div><div class="meta-value">Australian Radiation Protection and Nuclear Safety Agency via data.gov.au</div></div>
+            <div class="source-meta-item"><div class="meta-label">License</div><div class="meta-value">Creative Commons Attribution 2.5 Australia</div></div>
+            <div class="source-meta-item"><div class="meta-label">Format</div><div class="meta-value">CSV — loaded into PostgreSQL</div></div>
+          </div>
+          <a class="source-link" href="https://data.gov.au/data/organization/australian-radiation-protection-and-nuclear-safety-agency-arpansa" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Access Dataset</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="source-card sc-github">
+      <div class="source-card-inner">
+        <div class="source-card-accent">07</div>
+        <div class="source-card-body">
+          <div class="source-card-top"><div class="source-card-title">Location Data</div><div class="source-badges"><span class="source-badge">GitHub</span><span class="source-badge" style="color:var(--muted);border-color:var(--line)">GPL v3.0</span></div></div>
+          <div class="source-meta-grid">
+            <div class="source-meta-item"><div class="meta-label">Used for</div><div class="meta-value">US1.1 — Location lookup to support UV index retrieval by suburb or postcode</div></div>
+            <div class="source-meta-item"><div class="meta-label">Source</div><div class="meta-value">GitHub (randomecho)</div></div>
+            <div class="source-meta-item"><div class="meta-label">License</div><div class="meta-value">GNU General Public License v3.0</div></div>
+            <div class="source-meta-item"><div class="meta-label">Format</div><div class="meta-value">JSON — loaded into PostgreSQL</div></div>
+          </div>
+          <a class="source-link" href="https://gist.github.com/randomecho/5020859" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>View on GitHub</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="source-card sc-abs">
+      <div class="source-card-inner">
+        <div class="source-card-accent">08</div>
+        <div class="source-card-body">
+          <div class="source-card-top"><div class="source-card-title">Sun Protection Behaviours Nov 2023 – Feb 2024</div><div class="source-badges"><span class="source-badge">ABS</span><span class="source-badge" style="color:var(--muted);border-color:var(--line)">CC BY 3.0 AU</span></div></div>
+          <div class="source-meta-grid">
+            <div class="source-meta-item"><div class="meta-label">Used for</div><div class="meta-value">Background research — understanding current sun protection behaviours among Australians</div></div>
+            <div class="source-meta-item"><div class="meta-label">Source</div><div class="meta-value">Australian Bureau of Statistics</div></div>
+            <div class="source-meta-item"><div class="meta-label">License</div><div class="meta-value">Creative Commons Attribution 3.0 Australia</div></div>
+            <div class="source-meta-item"><div class="meta-label">Period</div><div class="meta-value">November 2023 to February 2024</div></div>
+          </div>
+          <a class="source-link" href="https://www.abs.gov.au/statistics/health/health-conditions-and-risks/sun-protection-behaviours/latest-release" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>View at ABS</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="ds-legend" id="ds-legend">
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:14px;">Source Legend<span style="flex:1;height:1px;background:var(--line);display:block;"></span></div>
+  <div class="legend-grid reveal-children">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div><div><div class="legend-name">AIHW</div><div class="legend-desc">Australian Institute of Health and Welfare — cancer statistics</div></div></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div><div><div class="legend-name">OpenWeatherMap</div><div class="legend-desc">Real-time UV index via REST API</div></div></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div><div><div class="legend-name">ARPANSA</div><div class="legend-desc">Historical UV data across capital cities</div></div></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--ink)"></div><div><div class="legend-name">GitHub</div><div class="legend-desc">Suburb and postcode location reference</div></div></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div><div><div class="legend-name">ABS</div><div class="legend-desc">Sun protection behaviour survey data</div></div></div>
+  </div>
+</section>
+
+<footer>
+  <div class="f-left">FIT5120 &nbsp;/&nbsp; Onboarding Iteration &nbsp;/&nbsp; Data Sources</div>
+  <div class="f-tags"><span class="f-tag">AIHW</span><span class="f-tag">OpenWeatherMap</span><span class="f-tag">ARPANSA</span><span class="f-tag">ABS</span><span class="f-tag">GitHub</span></div>
+</footer>
+
+</div>
+
+<script>
+// ===================== TAB SWITCHING =====================
+function switchTab(n){
+  document.getElementById('page1').classList.toggle('active',n===1);
+  document.getElementById('page2').classList.toggle('active',n===2);
+  document.getElementById('tab1').classList.toggle('active',n===1);
+  document.getElementById('tab2').classList.toggle('active',n===2);
+  document.getElementById('dotsPage1').style.display=n===1?'flex':'none';
+  document.getElementById('dotsPage2').style.display=n===2?'flex':'none';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===2){setTimeout(()=>{document.querySelectorAll('#page2 .reveal,#page2 .reveal-children').forEach(el=>{const r=el.getBoundingClientRect();if(r.top<window.innerHeight)el.classList.add('visible');});},100);}
+}
+
+// ===================== PROGRESS + NAV =====================
+const bar=document.getElementById('progress');
+function onScroll(){
+  const s=window.scrollY,t=document.documentElement.scrollHeight-window.innerHeight;
+  bar.style.width=(s/t*100)+'%';
+  const s1=['hero','sec-diagram','sec-overview','sec-react','sec-flask','sec-compare','sec-tools'];
+  let c1=0;s1.forEach((id,i)=>{const el=document.getElementById(id);if(el&&s>=el.offsetTop-window.innerHeight/2)c1=i;});
+  document.querySelectorAll('#dotsPage1 .nav-dot').forEach((d,i)=>d.classList.toggle('active',i===c1));
+  const s2=['ds-hero','ds-overview','ds-aihw','ds-other','ds-legend'];
+  let c2=0;s2.forEach((id,i)=>{const el=document.getElementById(id);if(el&&s>=el.offsetTop-window.innerHeight/2)c2=i;});
+  document.querySelectorAll('#dotsPage2 .nav-dot').forEach((d,i)=>d.classList.toggle('active',i===c2));
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+document.querySelectorAll('#dotsPage1 .nav-dot').forEach((d,i)=>{
+  const ids=['hero','sec-diagram','sec-overview','sec-react','sec-flask','sec-compare','sec-tools'];
+  d.addEventListener('click',()=>document.getElementById(ids[i]).scrollIntoView({behavior:'smooth'}));
+});
+document.querySelectorAll('#dotsPage2 .nav-dot').forEach((d,i)=>{
+  const ids=['ds-hero','ds-overview','ds-aihw','ds-other','ds-legend'];
+  d.addEventListener('click',()=>document.getElementById(ids[i]).scrollIntoView({behavior:'smooth'}));
+});
+
+// ===================== SCROLL REVEAL =====================
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.08});
+document.querySelectorAll('.reveal,.reveal-children').forEach(el=>obs.observe(el));
+
+// ===================== CANVAS UTILITIES =====================
+function initCanvas(id){
+  const c=document.getElementById(id);if(!c)return null;
+  const dpr=window.devicePixelRatio||1;
+  function resize(){const rect=c.parentElement.getBoundingClientRect();c.width=rect.width*dpr;c.height=c.offsetHeight*dpr;c.getContext('2d').scale(dpr,dpr);c._w=rect.width;c._h=c.offsetHeight;}
+  resize();window.addEventListener('resize',resize);return c;
+}
+function cx(c){return c?c.getContext('2d'):null;}
+function W(c){return c._w||c.offsetWidth||400;}
+function H(c){return c._h||c.offsetHeight||200;}
+
+// ===================== 1. FLOW CANVAS =====================
+(function(){
+  const c=initCanvas('flowCanvas');if(!c)return;
+  const packets=[];let frame=0;
+  const nd=[{label:'User',color:'#0891b2'},{label:'React',color:'#2a5ce6'},{label:'Flask',color:'#1a7a4a'},{label:'OWM / PostgreSQL',color:'#c2500a'},{label:'Recharts',color:'#2a5ce6'}];
+  function gn(){const cw=W(c),ch=H(c),pad=48,cy=ch*0.42;return nd.map((n,i)=>({x:pad+(cw-pad*2)*(i/(nd.length-1)),y:cy,...n}));}
+  function spawn(){packets.push({seg:0,t:0,speed:0.008+Math.random()*0.005,color:['#2a5ce6','#0891b2','#1a7a4a'][Math.floor(Math.random()*3)]});}
+  function draw(){
+    const g=cx(c),cw=W(c),ch=H(c);g.clearRect(0,0,cw,ch);
+    const nodes=gn();
+    g.strokeStyle='#d4cfc8';g.lineWidth=1.5;
+    for(let i=0;i<nodes.length-1;i++){g.beginPath();g.moveTo(nodes[i].x,nodes[i].y);g.lineTo(nodes[i+1].x,nodes[i+1].y);g.stroke();}
+    nodes.forEach(n=>{g.beginPath();g.arc(n.x,n.y,9,0,Math.PI*2);g.fillStyle=n.color;g.fill();});
+    g.font='11px "IBM Plex Mono",monospace';g.textAlign='center';g.textBaseline='top';
+    nodes.forEach(n=>{g.fillStyle='#7a7169';g.fillText(n.label,n.x,n.y+16);});
+    for(let i=packets.length-1;i>=0;i--){
+      const p=packets[i];if(p.seg>=nodes.length-1){packets.splice(i,1);continue;}
+      p.t+=p.speed;if(p.t>=1){p.seg++;p.t=0;if(p.seg>=nodes.length-1){packets.splice(i,1);continue;}}
+      const n1=nodes[p.seg],n2=nodes[p.seg+1];
+      const px=n1.x+(n2.x-n1.x)*p.t,py=n1.y+(n2.y-n1.y)*p.t;
+      g.beginPath();g.arc(px,py,5,0,Math.PI*2);g.fillStyle=p.color;g.shadowColor=p.color;g.shadowBlur=10;g.fill();g.shadowBlur=0;
+    }
+    frame++;if(frame%60===0)spawn();requestAnimationFrame(draw);
+  }
+  spawn();spawn();draw();
+})();
+
+// ===================== 2. OVERVIEW LIFECYCLE =====================
+(function(){
+  const c=initCanvas('overviewCanvas');if(!c)return;
+  let progress=0;
+  const stages=[{label:'Location Input',color:'#0891b2'},{label:'Flask Processing',color:'#1a7a4a'},{label:'UV Fetch',color:'#c2500a'},{label:'PostgreSQL Query',color:'#336791'},{label:'Render Chart',color:'#2a5ce6'}];
+  function draw(){
+    const g=cx(c),cw=W(c),ch=H(c);g.clearRect(0,0,cw,ch);
+    const n=stages.length,pad=12,gap=6,totalW=cw-pad*2,bw=(totalW-gap*(n-1))/n,bh=ch-28,by=6;
+    stages.forEach((s,i)=>{
+      const x=pad+i*(bw+gap),filled=Math.min(1,Math.max(0,(progress-i*0.2)*5));
+      g.fillStyle='#e8e4de';g.beginPath();g.roundRect(x,by,bw,bh,6);g.fill();
+      if(filled>0){
+        g.save();g.beginPath();g.roundRect(x,by,bw,bh,6);g.clip();
+        g.fillStyle=s.color+'22';g.fillRect(x,by,bw*filled,bh);g.restore();
+        g.strokeStyle=s.color;g.lineWidth=1.5;g.beginPath();g.roundRect(x,by,bw,bh,6);g.stroke();
+      }else{g.strokeStyle='#d4cfc8';g.lineWidth=1;g.beginPath();g.roundRect(x,by,bw,bh,6);g.stroke();}
+      g.font='10px "IBM Plex Mono",monospace';g.fillStyle=filled>0?s.color:'#aaa';
+      g.textAlign='center';g.textBaseline='middle';g.fillText(s.label,x+bw/2,by+bh/2);
+      if(i<n-1){g.fillStyle=filled>=1?s.color:'#d4cfc8';const ax=x+bw+gap/2,ay=by+bh/2;g.beginPath();g.moveTo(ax+3,ay);g.lineTo(ax-2,ay-4);g.lineTo(ax-2,ay+4);g.closePath();g.fill();}
+    });
+    progress+=0.004;if(progress>1.4)progress=0;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ===================== 3. REACT TREE =====================
+(function(){
+  const c=initCanvas('reactCanvas');if(!c)return;
+  let pulse=0;
+  const tree=[
+    {id:0,label:'<App />',x:0.50,y:0.10,color:'#2a5ce6',children:[1,2,3]},
+    {id:1,label:'<UVTracker />',x:0.18,y:0.38,color:'#0891b2',children:[4,5]},
+    {id:2,label:'<Clothing />',x:0.50,y:0.38,color:'#1a7a4a',children:[6]},
+    {id:3,label:'<Charts />',x:0.82,y:0.38,color:'#c2500a',children:[7]},
+    {id:4,label:'<Alert />',x:0.10,y:0.72,color:'#2a5ce6',children:[]},
+    {id:5,label:'<Map />',x:0.30,y:0.72,color:'#2a5ce6',children:[]},
+    {id:6,label:'<Recommend />',x:0.56,y:0.72,color:'#1a7a4a',children:[]},
+    {id:7,label:'<Recharts />',x:0.82,y:0.72,color:'#c2500a',children:[]},
+  ];
+  function draw(){
+    const g=cx(c),cw=W(c),ch=H(c);g.clearRect(0,0,cw,ch);
+    tree.forEach(n=>{n.children.forEach(cid=>{const ch2=tree[cid];g.beginPath();g.moveTo(n.x*cw,n.y*ch);g.lineTo(ch2.x*cw,ch2.y*ch);g.strokeStyle='#d4cfc8';g.lineWidth=1.5;g.stroke();});});
+    tree.forEach((n,i)=>{
+      const gp=(pulse+i*0.5)%(Math.PI*2),glow=0.5+0.5*Math.sin(gp);
+      const rx=Math.min(n.children.length>0?52:44,cw*0.10),ry=14;
+      g.beginPath();g.ellipse(n.x*cw,n.y*ch,rx,ry,0,0,Math.PI*2);
+      g.fillStyle=n.color+Math.round((0.06+glow*0.08)*255).toString(16).padStart(2,'0');g.fill();
+      g.strokeStyle=n.color;g.lineWidth=1.5;g.stroke();
+      g.font='500 10px "IBM Plex Mono",monospace';g.fillStyle=n.color;g.textAlign='center';g.textBaseline='middle';
+      g.fillText(n.label,n.x*cw,n.y*ch);
+    });
+    pulse+=0.035;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ===================== 4. FLASK API =====================
+(function(){
+  const c=initCanvas('flaskCanvas');if(!c)return;
+  const packets=[];let frame=0;
+  const routes=[{path:'/api/uv',method:'GET',color:'#1a7a4a'},{path:'/api/recommend',method:'POST',color:'#2a5ce6'},{path:'/api/datasets',method:'GET',color:'#336791'}];
+  function spawn(){const r=routes[Math.floor(Math.random()*routes.length)];packets.push({lane:0.3+Math.random()*0.4,t:0,speed:0.009+Math.random()*0.005,route:r,returning:false});}
+  function draw(){
+    const g=cx(c),cw=W(c),ch=H(c);g.clearRect(0,0,cw,ch);
+    const rx=16,ry=ch/2-24,rw=72,rh=48;
+    g.beginPath();g.roundRect(rx,ry,rw,rh,8);g.fillStyle='rgba(42,92,230,0.06)';g.fill();g.strokeStyle='#2a5ce6';g.lineWidth=1.5;g.stroke();
+    g.font='500 12px "IBM Plex Mono",monospace';g.fillStyle='#2a5ce6';g.textAlign='center';g.textBaseline='middle';g.fillText('React',rx+rw/2,ry+rh/2);
+    const fx=cw-88,fy=ch/2-32,fw=72,fh=64;
+    g.beginPath();g.roundRect(fx,fy,fw,fh,8);g.fillStyle='rgba(26,122,74,0.06)';g.fill();g.strokeStyle='#1a7a4a';g.lineWidth=1.5;g.stroke();
+    g.font='bold 12px "IBM Plex Mono",monospace';g.fillStyle='#1a7a4a';g.textAlign='center';g.textBaseline='middle';g.fillText('Flask',fx+fw/2,fy+fh/2);
+    g.font='10px "IBM Plex Mono",monospace';g.textBaseline='alphabetic';
+    routes.forEach((r,i)=>{g.fillStyle=r.color;g.textAlign='left';g.fillText(r.method+' '+r.path,rx+rw+8,18+i*17);});
+    g.strokeStyle='#e8e4de';g.lineWidth=1;g.beginPath();g.moveTo(rx+rw,ch/2);g.lineTo(fx,ch/2);g.stroke();
+    const startX=rx+rw+2,endX=fx-2;
+    for(let i=packets.length-1;i>=0;i--){
+      const p=packets[i];p.t+=p.speed;
+      if(p.t>1&&!p.returning){p.returning=true;p.t=0;}
+      if(p.t>1&&p.returning){packets.splice(i,1);continue;}
+      const x=p.returning?startX+(endX-startX)*(1-p.t):startX+(endX-startX)*p.t,y=ch*p.lane;
+      g.beginPath();g.arc(x,y,4,0,Math.PI*2);g.fillStyle=p.route.color;g.shadowColor=p.route.color;g.shadowBlur=8;g.fill();g.shadowBlur=0;
+    }
+    frame++;if(frame%50===0)spawn();requestAnimationFrame(draw);
+  }
+  spawn();spawn();spawn();draw();
+})();
+
+// ===================== 5. POSTGRESQL CANVAS =====================
+(function(){
+  const c=initCanvas('pgCanvas');if(!c)return;
+  const tables=['cancer_inc','cancer_mort','uv_history','locations'];
+  let queries=[],frame=0;
+  const queryTypes=[
+    {sql:'SELECT * FROM cancer_inc',color:'#336791'},
+    {sql:'SELECT * FROM locations',color:'#1a7a4a'},
+    {sql:'INSERT INTO uv_history',color:'#c2500a'},
+    {sql:'SELECT * FROM cancer_mort',color:'#336791'},
+  ];
+  function addQuery(){queries.push({qi:Math.floor(Math.random()*queryTypes.length),t:0});}
+  function draw(){
+    const g=cx(c),cw=W(c),ch=H(c);g.clearRect(0,0,cw,ch);
+    // Draw table headers
+    const n=tables.length,pad=6,gap=4,bw=(cw-pad*2-gap*(n-1))/n;
+    tables.forEach((t,i)=>{
+      const x=pad+i*(bw+gap);
+      g.beginPath();g.roundRect(x,4,bw,ch-8,4);
+      g.fillStyle='rgba(51,103,145,0.05)';g.fill();g.strokeStyle='rgba(51,103,145,0.25)';g.lineWidth=1;g.stroke();
+      g.font='8px "IBM Plex Mono",monospace';g.fillStyle='#336791';g.textAlign='center';g.textBaseline='top';
+      g.fillText(t,x+bw/2,7);
+      // table rows sim
+      for(let r=1;r<=2;r++){
+        g.fillStyle='rgba(51,103,145,0.08)';
+        g.fillRect(x+3,4+r*14,bw-6,10);
+      }
+    });
+    // Animate queries
+    queries=queries.filter(q=>q.t<1.8);
+    queries.forEach(q=>{
+      q.t+=0.035;
+      const alpha=Math.max(0,1-q.t/1.8);
+      const qt=queryTypes[q.qi];
+      const y=ch/2+8*Math.sin(q.t*2);
+      g.font='bold 8px "IBM Plex Mono",monospace';
+      g.fillStyle=`rgba(${qt.color==='#336791'?'51,103,145':qt.color==='#1a7a4a'?'26,122,74':'194,80,10'},${alpha})`;
+      g.textAlign='center';g.textBaseline='middle';
+      g.fillText(qt.sql,cw/2,y);
+    });
+    frame++;if(frame%45===0)addQuery();requestAnimationFrame(draw);
+  }
+  addQuery();draw();
+})();
+
+// ===================== 6. OWM =====================
+(function(){
+  const c=initCanvas('owmCanvas');if(!c)return;
+  let t=0;
+  function draw(){
+    const g=cx(c),cw=W(c),ch=H(c);g.clearRect(0,0,cw,ch);
+    g.beginPath();g.moveTo(0,ch);
+    for(let x=0;x<=cw;x++){const v=3+3*Math.sin(x*0.04+t)+1.5*Math.sin(x*0.09-t*1.2);g.lineTo(x,ch-v*(ch/13));}
+    g.lineTo(cw,ch);g.closePath();
+    const grad=g.createLinearGradient(0,0,0,ch);grad.addColorStop(0,'rgba(194,80,10,0.4)');grad.addColorStop(1,'rgba(194,80,10,0.05)');
+    g.fillStyle=grad;g.fill();
+    g.beginPath();g.moveTo(0,ch);
+    for(let x=0;x<=cw;x++){const v=3+3*Math.sin(x*0.04+t)+1.5*Math.sin(x*0.09-t*1.2);g.lineTo(x,ch-v*(ch/13));}
+    g.strokeStyle='#c2500a';g.lineWidth=2;g.stroke();
+    g.font='10px "IBM Plex Mono",monospace';g.fillStyle='#c2500a';g.textAlign='left';g.textBaseline='top';
+    g.fillText('UV Index: '+(6+3*Math.sin(t)).toFixed(1),8,6);
+    t+=0.03;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ===================== 7. RECHARTS =====================
+(function(){
+  const c=initCanvas('rechartsCanvas');if(!c)return;
+  const months=['Jan','Mar','May','Jul','Sep','Nov'],targets=[0.38,0.52,0.78,0.95,0.68,0.44];
+  let currents=targets.map(()=>0),growing=true,frame=0;
+  function draw(){
+    const g=cx(c),cw=W(c),ch=H(c);g.clearRect(0,0,cw,ch);
+    const n=months.length,pad=8,gap=4,bw=Math.floor((cw-pad*2-gap*(n-1))/n);
+    months.forEach((m,i)=>{
+      if(growing)currents[i]=Math.min(targets[i],currents[i]+0.015);
+      const bh=currents[i]*(ch-20),x=pad+i*(bw+gap),y=ch-bh-14;
+      g.beginPath();g.roundRect(x,y,bw,bh,3);
+      const gr=g.createLinearGradient(0,y,0,y+bh);gr.addColorStop(0,'rgba(42,92,230,0.75)');gr.addColorStop(1,'rgba(42,92,230,0.2)');
+      g.fillStyle=gr;g.fill();
+      g.font='9px "IBM Plex Mono",monospace';g.fillStyle='#7a7169';g.textAlign='center';g.textBaseline='bottom';g.fillText(m,x+bw/2,ch-2);
+    });
+    frame++;if(frame>220&&growing){growing=false;currents=targets.map(()=>0);frame=0;}
+    if(!growing&&frame>8)growing=true;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ===================== 8. VERCEL =====================
+(function(){
+  const c=initCanvas('vercelCanvas');if(!c)return;
+  const steps=['Push','Build','Deploy','Live'];let progress=0;
+  function draw(){
+    const g=cx(c),cw=W(c),ch=H(c);g.clearRect(0,0,cw,ch);
+    const n=steps.length,pad=12,gap=8,sw=(cw-pad*2-gap*(n-1))/n,cy=ch/2;
+    steps.forEach((s,i)=>{
+      const x=pad+i*(sw+gap),cx2=x+sw/2,filled=Math.min(1,Math.max(0,(progress-i*0.25)*4));
+      g.beginPath();g.arc(cx2,cy,12,0,Math.PI*2);
+      g.fillStyle=filled===1?'#1a1614':filled>0?'rgba(26,26,20,0.12)':'#e8e4de';g.fill();
+      g.strokeStyle=filled>0?'#1a1614':'#d4cfc8';g.lineWidth=1.5;g.stroke();
+      g.font='500 10px "IBM Plex Mono",monospace';g.fillStyle=filled===1?'#f0ede8':filled>0?'#1a1614':'#7a7169';
+      g.textAlign='center';g.textBaseline='middle';g.fillText(i+1,cx2,cy);
+      g.font='9px "IBM Plex Mono",monospace';g.fillStyle='#7a7169';g.textBaseline='top';g.fillText(s,cx2,cy+16);
+    });
+    progress+=0.004;if(progress>1.4)progress=0;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ===================== 9. FRAMER =====================
+(function(){
+  const c=initCanvas('framerCanvas');if(!c)return;
+  let t=0;
+  function ease(x){const c4=(2*Math.PI)/3;return x===0?0:x===1?1:Math.pow(2,-10*x)*Math.sin((x*10-0.75)*c4)+1;}
+  function draw(){
+    const g=cx(c),cw=W(c),ch=H(c),pad=14;g.clearRect(0,0,cw,ch);
+    g.beginPath();
+    for(let i=0;i<=cw;i++){const p=i/cw,y=(ch-pad)-(ch-pad*2)*ease(p);i===0?g.moveTo(i,y):g.lineTo(i,y);}
+    g.strokeStyle='#6d28d9';g.lineWidth=2;g.stroke();
+    const px=(t%1)*cw,py=(ch-pad)-(ch-pad*2)*ease(t%1);
+    g.beginPath();g.arc(px,py,5,0,Math.PI*2);g.fillStyle='#6d28d9';g.shadowColor='#6d28d9';g.shadowBlur=12;g.fill();g.shadowBlur=0;
+    g.font='9px "IBM Plex Mono",monospace';g.fillStyle='#6d28d9';g.textAlign='right';g.textBaseline='top';g.fillText('easeOutElastic',cw-6,5);
+    t+=0.008;requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ===================== 10. AOS =====================
+(function(){
+  const c=initCanvas('aosCanvas');if(!c)return;
+  let scroll=0;const items=[{y:0.15},{y:0.45},{y:0.75}];
+  function draw(){
+    const g=cx(c),cw=W(c),ch=H(c);g.clearRect(0,0,cw,ch);
+    scroll=(scroll+0.003)%1;const viewTop=scroll,viewBot=scroll+0.55;
+    items.forEach((item,i)=>{
+      const inView=item.y>=viewTop&&item.y<=viewBot,prog=inView?Math.min(1,(item.y-viewTop)/0.25):0;
+      const alpha=0.15+prog*0.85,startX=8+(1-prog)*(cw*0.35),bh=16,by=item.y/1.1*ch;
+      g.beginPath();g.roundRect(startX,by,cw-startX-20,bh,4);
+      g.fillStyle=`rgba(8,145,178,${alpha*0.12})`;g.fill();g.strokeStyle=`rgba(8,145,178,${alpha})`;g.lineWidth=1;g.stroke();
+      g.font='9px "IBM Plex Mono",monospace';g.fillStyle=`rgba(8,145,178,${alpha})`;g.textAlign='left';g.textBaseline='middle';
+      g.fillText('element '+(i+1),startX+8,by+bh/2);
+    });
+    const sy=4+scroll*(ch-16);
+    g.beginPath();g.moveTo(cw-7,4);g.lineTo(cw-7,ch-4);g.strokeStyle='#d4cfc8';g.lineWidth=2;g.stroke();
+    g.beginPath();g.roundRect(cw-10,sy,6,10,3);g.fillStyle='#0891b2';g.fill();
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>
