@@ -30,10 +30,14 @@ def create_app():
     #CORS(app, origins=os.getenv("FRONTEND_URL", "http://localhost:5173"))
     CORS(
     app,
-    origins=[
-        "http://localhost:5173",
-        "https://fit-5120-the-generational-shift-in.vercel.app/"
-    ],
+    resources={
+        r"/api/*": {
+            "origins": [
+                "http://localhost:5173",
+                "https://fit-5120-the-generational-shift-in.vercel.app"
+            ]
+        }
+    },
     supports_credentials=True
 )
     jwt.init_app(app)
