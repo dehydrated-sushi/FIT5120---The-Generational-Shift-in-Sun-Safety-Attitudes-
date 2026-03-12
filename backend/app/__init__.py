@@ -27,7 +27,14 @@ def create_app():
     app.config["DATABASE_URL"] = os.getenv("DATABASE_URL")
 
     # Extensions
-    CORS(app, origins=os.getenv("FRONTEND_URL", "http://localhost:5173"))
+    #CORS(app, origins=os.getenv("FRONTEND_URL", "http://localhost:5173"))
+    CORS(
+    app,
+    resources={r"/api/*": {"origins": [
+        "http://localhost:5173",
+        "https://fit5120-the-generational-shift-in-sun-fti-projects-7b0d342c.vercel.app"
+    ]}}
+)
     jwt.init_app(app)
     limiter.init_app(app)
 
