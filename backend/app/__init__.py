@@ -32,7 +32,7 @@ def create_app():
     app,
     origins=[
         "http://localhost:5173",
-        "https://fit5120-the-generational-shift-in.vercel.app"
+        "https://fit-5120-the-generational-shift-in.vercel.app"
     ],
     supports_credentials=True
 )
