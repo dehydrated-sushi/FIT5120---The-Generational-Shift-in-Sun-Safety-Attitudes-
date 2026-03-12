@@ -1,0 +1,236 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  .uv-page {
+    min-height: 100vh;
+    padding: 24px 18px 32px;
+    font-family: Arial, sans-serif;
+    color: white;
+    transition: background 0.3s ease;
+  }
+  
+  .bg-low {
+    background: linear-gradient(to bottom, #43a047 0%, #dcedc8 100%);
+  }
+  
+  .bg-moderate {
+    background: linear-gradient(to bottom, #f6a000 0%, #efe7d6 100%);
+  }
+  
+  .bg-high {
+    background: linear-gradient(to bottom, #f57c00 0%, #f3dfcf 100%);
+  }
+  
+  .bg-very-high {
+    background: linear-gradient(to bottom, #d32f2f 0%, #ead9d9 100%);
+  }
+  
+  .bg-extreme {
+    background: linear-gradient(to bottom, #7b1fa2 0%, #e2d8e9 100%);
+  }
+  
+  .uv-hero {
+    text-align: center;
+    padding-top: 20px;
+    margin-bottom: 26px;
+  }
+  
+  .uv-level-title {
+    margin: 0;
+    font-size: 3.2rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .uv-weather-text {
+    margin: 10px 0 6px;
+    font-size: 1.7rem;
+    font-weight: 600;
+  }
+  
+  .uv-location-text {
+    margin: 0;
+    font-size: 1.3rem;
+    opacity: 0.95;
+  }
+  
+  .uv-time-slider-section {
+    margin: 10px 0 28px;
+  }
+  
+  .uv-time-slider {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 8px 4px 14px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .uv-time-slider::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  .uv-time-slider::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+  }
+  
+  .uv-time-pill {
+    min-width: 90px;
+    border: none;
+    border-radius: 18px;
+    padding: 14px 12px;
+    background: rgba(255, 255, 255, 0.16);
+    color: white;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    scroll-snap-align: center;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  
+  .uv-time-pill:hover {
+    transform: translateY(-2px);
+  }
+  
+  .uv-time-pill.active {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  }
+  
+  .uv-time-pill-time {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+  
+  .uv-time-pill-value {
+    display: block;
+    margin-top: 6px;
+    font-size: 1.4rem;
+    font-weight: 900;
+  }
+  
+  .uv-gauge-section {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0 34px;
+  }
+  
+  .uv-gauge-ring {
+    position: relative;
+    width: min(78vw, 380px);
+    height: min(78vw, 380px);
+    border-radius: 50%;
+    padding: 28px;
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.18);
+  }
+  
+  .uv-gauge-inner {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #efefef;
+    color: #111;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .uv-gauge-value {
+    font-size: 4.6rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+  
+  .uv-gauge-level {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+  
+  .uv-gauge-weather {
+    margin-top: 6px;
+    font-size: 1rem;
+    color: #444;
+    text-transform: capitalize;
+  }
+  
+  .uv-gauge-temp {
+    margin-top: 4px;
+    font-size: 0.95rem;
+    color: #666;
+  }
+  
+  .uv-gauge-pointer {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+  
+  .uv-gauge-pointer-dot {
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    margin-top: 8px;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+  }
+  
+  .uv-info-card {
+    max-width: 520px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.22);
+    border-radius: 24px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    color: white;
+  }
+  
+  .uv-info-card h3 {
+    margin: 18px 0 10px;
+  }
+  
+  .uv-warning-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .uv-warning-row p {
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  .uv-warning-sign {
+    font-size: 1.5rem;
+  }
+  
+  .uv-clothing-list {
+    margin: 0;
+    padding-left: 20px;
+  }
+  
+  .uv-clothing-list li {
+    margin-bottom: 8px;
+  }
+  
+  .uv-page-status {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    font-size: 1.2rem;
+  }
+  
+  .uv-page-status.error {
+    color: #d32f2f;
+  }
