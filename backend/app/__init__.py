@@ -20,13 +20,14 @@ def create_app():
     app.config["DATABASE_URL"] = os.getenv("DATABASE_URL")
     app.config["OPENWEATHER_API_KEY"] = os.getenv("OPENWEATHER_API_KEY")
 
+    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
     CORS(
         app,
         resources={
             r"/api/*": {
                 "origins": [
                     "http://localhost:5173",
-                    "https://fit-5120-the-generational-shift-in.vercel.app"
+                    frontend_url,
                 ]
             }
         }
