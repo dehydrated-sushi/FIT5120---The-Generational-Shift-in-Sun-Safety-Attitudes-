@@ -47,7 +47,8 @@ def create_app():
             "origins": [
                 "http://localhost:5173",
                 "https://fit-5120-the-generational-shift-in.vercel.app",
-                "https://teambuild-nu.vercel.app"
+                "https://teambuild-nu.vercel.app",
+                "https://teambuild-git-main-asokha126s-projects.vercel.app"
             ]
         }
     }
