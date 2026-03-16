@@ -25,7 +25,8 @@ def create_app():
             r"/api/*": {
                 "origins": [
                     "http://localhost:5173",
-                    "https://fit-5120-the-generational-shift-in.vercel.app"
+                    "https://fit-5120-the-generational-shift-in.vercel.app",
+                    "https://teambuild-nu.vercel.app"
                 ]
             }
         }
