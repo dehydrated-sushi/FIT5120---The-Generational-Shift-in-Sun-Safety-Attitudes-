@@ -19,6 +19,8 @@ def create_app():
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "dev-jwt-key")
     app.config["DATABASE_URL"] = os.getenv("DATABASE_URL")
     app.config["OPENWEATHER_API_KEY"] = os.getenv("OPENWEATHER_API_KEY")
+    app.config["TEAM_USERNAME"] = os.getenv("TEAM_USERNAME", "")
+    app.config["TEAM_PASSWORD"] = os.getenv("TEAM_PASSWORD", "")
 
     frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
     CORS(

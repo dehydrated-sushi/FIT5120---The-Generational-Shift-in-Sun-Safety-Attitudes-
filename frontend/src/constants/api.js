@@ -12,6 +12,7 @@ export const ENDPOINTS = {
   UV: '/uv/',
   CANCER: '/cancer/',
   AUTH: '/auth/',
+  AUTH_LOGIN: '/auth/login',
   HEALTH: '/health',
   LOCATIONS: '/locations/',
 };
