@@ -97,14 +97,33 @@ def get_uv_forecast():
     lon = request.args.get("lon", str(MELBOURNE_LON))
 
     try:
-        # Current UV (OpenWeather UVI endpoint) -- UVI is treated as "current now"
+        # Current UV (OpenWeather UVI endpoint)
         uvi_url = f"https://api.openweathermap.org/data/2.5/uvi?lat={lat}&lon={lon}&appid={api_key}"
         uvi_resp = requests.get(uvi_url, timeout=15)
         uvi_resp.raise_for_status()
         uvi_data = uvi_resp.json()
         current_uv = round(uvi_data.get("value", 0))
 
-        # Forecast data (weather) -- we will use this for temp + condition + forecast slots
+        # Current weather — includes sunrise/sunset and actual current conditions
+        weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={api_key}"
+        weather_resp = requests.get(weather_url, timeout=15)
+        weather_resp.raise_for_status()
+        weather_data = weather_resp.json()
+
+        # Determine daytime vs nighttime using UTC timestamps (location-agnostic)
+        now_ts = int(datetime.now().timestamp())
+        sunrise_ts = weather_data["sys"]["sunrise"]
+        sunset_ts = weather_data["sys"]["sunset"]
+        is_daytime = sunrise_ts <= now_ts <= sunset_ts
+
+        if not is_daytime:
+            current_uv = 0
+
+        # Current temp and condition from actual current weather, not forecast
+        current_temp = weather_data["main"]["temp"]
+        current_weather = weather_data["weather"][0]["description"]
+
+        # Forecast data — for hourly forecast slots only
         forecast_url = (
             f"https://api.openweathermap.org/data/2.5/forecast"
             f"?lat={lat}&lon={lon}&units=metric&cnt=8&appid={api_key}"
@@ -114,23 +133,15 @@ def get_uv_forecast():
         forecast_data = forecast_resp.json()
         forecast_list = forecast_data.get("list", [])
 
-        # Build the response
-        now_melbourne = datetime.now(MELBOURNE_TZ)
-        current_time_iso = now_melbourne.isoformat()
-
-        current_temp = None
-        current_weather = None
-        if forecast_list:
-            first = forecast_list[0]
-            current_temp = first.get("main", {}).get("temp")
-            current_weather = first.get("weather", [{}])[0].get("description")
+        current_time_iso = datetime.now(MELBOURNE_TZ).isoformat()
 
         current_details = uv_details(current_uv)
 
         current = {
             "time": current_time_iso,
             "uv": current_uv,
-            "uv_estimated": False,
+            "uv_estimated": not is_daytime,
+            "is_daytime": is_daytime,
             "level": current_details["level"],
             "color": current_details["color"],
             "warning_sign": current_details["warning_sign"],
@@ -139,6 +150,9 @@ def get_uv_forecast():
             "weather": current_weather,
             "temp": current_temp,
         }
+
+        if not is_daytime:
+            current["uv_note"] = "Nighttime — no UV risk"
 
         forecast = [
             {
