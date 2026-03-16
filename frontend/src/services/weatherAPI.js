@@ -1,28 +1,26 @@
 // services/weatherApi.js
+import api from './api';
+import { ENDPOINTS } from '../constants/api';
+
 const API_KEY = import.meta.env.VITE_OWM_KEY;
 const BASE = 'https://api.openweathermap.org';
 
 export async function geocode(query) {
   const isPostcode = /^\d{4}$/.test(query.trim());
 
-  let url;
   if (isPostcode) {
-    url = `${BASE}/geo/1.0/zip?zip=${query},AU&appid=${API_KEY}`;
-  } else {
-    url = `${BASE}/geo/1.0/direct?q=${encodeURIComponent(query)},AU&limit=1&appid=${API_KEY}`;
+    const res = await api.get(ENDPOINTS.LOCATIONS, { params: { postcode: query.trim() } });
+    const matches = res.data.matches;
+    if (!matches || !matches.length) throw new Error('Location not found');
+    const first = matches[0];
+    return { lat: first.lat, lon: first.lon, name: `${first.suburb}, ${first.state}` };
   }
 
+  const url = `${BASE}/geo/1.0/direct?q=${encodeURIComponent(query)},AU&limit=1&appid=${API_KEY}`;
   const res = await fetch(url);
   const data = await res.json();
-
-  
-  if (isPostcode) {
-    if (data.cod) throw new Error('Location not found');
-    return { lat: data.lat, lon: data.lon, name: data.name };
-  } else {
-    if (!data.length) throw new Error('Location not found');
-    return { lat: data[0].lat, lon: data[0].lon, name: data[0].name };
-  }
+  if (!data.length) throw new Error('Location not found');
+  return { lat: data[0].lat, lon: data[0].lon, name: data[0].name };
 }
 export async function fetchWeather(lat, lon) {
   // 

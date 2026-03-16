@@ -13,4 +13,5 @@ export const ENDPOINTS = {
   CANCER: '/cancer/',
   AUTH: '/auth/',
   HEALTH: '/health',
+  LOCATIONS: '/locations/',
 };
