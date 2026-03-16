@@ -102,7 +102,7 @@ def get_uv_forecast():
         uvi_resp = requests.get(uvi_url, timeout=15)
         uvi_resp.raise_for_status()
         uvi_data = uvi_resp.json()
-        current_uv = uvi_data.get("value", 0)
+        current_uv = round(uvi_data.get("value", 0))
 
         # Forecast data (weather) -- we will use this for temp + condition + forecast slots
         forecast_url = (

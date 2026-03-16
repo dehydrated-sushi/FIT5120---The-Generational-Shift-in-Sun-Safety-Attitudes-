@@ -6,6 +6,7 @@ import UVGauge from '../../components/UVAlert/UVGauge';
 import './Home.css';
 import '../../components/UVAlert/UVAlert.css';
 import { geocode, fetchWeather } from '../../services/weatherAPI';
+import { getUVAlert } from '../../services/uvService';
 import { useNavigate } from 'react-router-dom';
 
 // ── UV level config ───────────────────────────────────────────
@@ -333,8 +334,11 @@ export default function Home() {
   navigator.geolocation.getCurrentPosition(
     async (pos) => {
       try {
-        const data = await fetchWeather(pos.coords.latitude, pos.coords.longitude);
-        setWeather({ ...data, location: 'Current Location' });
+        const [data, uvData] = await Promise.all([
+          fetchWeather(pos.coords.latitude, pos.coords.longitude),
+          getUVAlert(pos.coords.latitude, pos.coords.longitude),
+        ]);
+        setWeather({ ...data, uvIndex: uvData?.current?.uv ?? data.uvIndex, location: 'Current Location' });
         setScreen('data');
       } catch {
         setScreen('manual');
@@ -345,8 +349,11 @@ export default function Home() {
       try {
         const res = await fetch('https://ipapi.co/json/');
         const ip = await res.json();
-        const data = await fetchWeather(ip.latitude, ip.longitude);
-        setWeather({ ...data, location: ip.city });
+        const [data, uvData] = await Promise.all([
+          fetchWeather(ip.latitude, ip.longitude),
+          getUVAlert(ip.latitude, ip.longitude),
+        ]);
+        setWeather({ ...data, uvIndex: uvData?.current?.uv ?? data.uvIndex, location: ip.city });
         setScreen('data');
       } catch {
         setScreen('manual');
@@ -365,8 +372,11 @@ export default function Home() {
   setScreen('loading');
   try {
     const { lat, lon, name } = await geocode(q);
-    const data = await fetchWeather(lat, lon);
-    setWeather({ ...data, location: name });
+    const [data, uvData] = await Promise.all([
+      fetchWeather(lat, lon),
+      getUVAlert(lat, lon),
+    ]);
+    setWeather({ ...data, uvIndex: uvData?.current?.uv ?? data.uvIndex, location: name });
     setStale(false);
     setScreen('data');
   } catch {

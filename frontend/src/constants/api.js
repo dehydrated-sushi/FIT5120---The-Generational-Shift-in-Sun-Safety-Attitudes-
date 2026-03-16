@@ -4,13 +4,13 @@
  */
 
 /** @type {string} Base URL for the Flask backend API */
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 /** @type {Object} API endpoint paths */
 export const ENDPOINTS = {
-  CLOTHING: '/api/clothing/',
-  UV: '/api/uv/',
-  CANCER: '/api/cancer/',
-  AUTH: '/api/auth/',
-  HEALTH: '/api/health',
+  CLOTHING: '/clothing/',
+  UV: '/uv/',
+  CANCER: '/cancer/',
+  AUTH: '/auth/',
+  HEALTH: '/health',
 };
