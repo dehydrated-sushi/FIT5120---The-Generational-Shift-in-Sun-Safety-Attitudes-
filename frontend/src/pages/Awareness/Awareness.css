@@ -1,0 +1,290 @@
+/* pages/Awareness/Awareness.css */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ── Root ────────────────────────────────── */
+.awareness-root {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(160deg, #0d1428 0%, #0a1020 100%);
+  font-family: 'DM Sans', sans-serif;
+  color: #e8edf5;
+  overflow: hidden;
+  
+}
+.awareness-root--revealed {
+  opacity: 1;
+}
+
+/* ── Scroll ──────────────────────────────── */
+.awareness-scroll {
+  height: calc(100% - 80px);  
+  overflow-y: auto;
+  padding: 20px 18px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  scrollbar-width: none;
+}
+.awareness-scroll::-webkit-scrollbar { display: none; }
+
+/* ── Header ──────────────────────────────── */
+.awareness-header {
+  padding: 8px 0 4px;
+}
+.awareness-header__eyebrow {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+.awareness-header__title {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 6px;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.awareness-header__sub {
+  font-size: 0.84rem;
+  color: rgba(255,255,255,0.42);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Sections ────────────────────────────── */
+.awareness-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.section-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.25);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+.section-sub {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.35);
+  margin: -6px 0 0;
+}
+
+/* ── Chart Card ──────────────────────────── */
+.chart-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 16px 12px 12px;
+}
+.chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.4);
+  margin-top: 10px;
+  padding-left: 4px;
+}
+.legend-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.chart-note {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.28);
+  margin: 10px 0 0;
+  padding-left: 4px;
+}
+
+/* Custom tooltip */
+.chart-tooltip {
+  background: rgba(10,16,32,0.95);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 0.78rem;
+  color: #e8edf5;
+}
+.tooltip-label {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.7rem;
+}
+
+/* ── State Filters ───────────────────────── */
+.state-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.state-filter-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.state-filter-btn.active {
+  background: rgba(255,255,255,0.08);
+}
+
+/* ── Insight Box ─────────────────────────── */
+.insight-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(251,191,36,0.08);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.insight-box__icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+.insight-box__text {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.6;
+  margin: 0;
+}
+.insight-box__text strong { color: #fbbf24; }
+
+/* ── Share Button ────────────────────────── */
+.share-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+}
+.share-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border-color: rgba(255,255,255,0.2);
+}
+.share-btn--small {
+  padding: 7px 12px;
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
+/* ── Myth Cards ──────────────────────────── */
+.myths-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.myth-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.myth-card:hover {
+  background: rgba(255,255,255,0.07);
+}
+.myth-card--expanded {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(248,113,113,0.3);
+}
+.myth-card__header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.myth-card__emoji { font-size: 1.4rem; flex-shrink: 0; margin-top: 1px; }
+.myth-card__content { flex: 1; }
+.myth-card__label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #f87171;
+  letter-spacing: 0.14em;
+  margin: 0 0 3px;
+}
+.myth-card__myth {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.82);
+  margin: 0;
+  line-height: 1.45;
+  font-style: italic;
+}
+.myth-card__chevron {
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.25);
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.myth-card__divider {
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 12px 0;
+}
+.myth-card__body {
+  animation: slideDown 0.25s ease;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.myth-card__fact-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #4ade80;
+  letter-spacing: 0.14em;
+  margin: 0 0 6px;
+}
+.myth-card__fact {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.6;
+  margin: 0 0 10px;
+}
+.myth-card__stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fbbf24;
+  background: rgba(251,191,36,0.1);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-bottom: 10px;
+}
+
+/* ── Sources ─────────────────────────────── */
+.awareness-sources {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.2);
+  text-align: center;
+  line-height: 1.6;
+  margin: 0;
+}

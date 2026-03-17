@@ -1,78 +1,62 @@
-.uv-card {
-    border-radius: 16px;
-    padding: 20px;
-    color: white;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    transition: transform 0.2s ease;
-  }
-  
-  .uv-card:hover {
-    transform: translateY(-4px);
-  }
-  
-  .uv-card.green {
-    background: #2e7d32;
-  }
-  
-  .uv-card.yellow {
-    background: #f9a825;
-    color: #222;
-  }
-  
-  .uv-card.orange {
-    background: #ef6c00;
-  }
-  
-  .uv-card.red {
-    background: #c62828;
-  }
-  
-  .uv-card.purple {
-    background: #6a1b9a;
-  }
-  
-  .uv-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  
-  .uv-badge {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 6px 10px;
-    border-radius: 999px;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-  
-  .uv-main {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-  }
-  
-  .uv-index {
-    font-size: 3rem;
-    font-weight: 700;
-  }
-  
-  .uv-meta p,
-  .uv-warning p,
-  .uv-clothing li {
-    margin: 6px 0;
-  }
-  
-  .uv-sign {
-    margin-right: 8px;
-  }
-  
-  .uv-clothing h4 {
-    margin-bottom: 8px;
-  }
-  
-  .uv-clothing ul {
-    padding-left: 20px;
-    margin: 0;
-  }
+/* components/UVAlert/UVAlert.css */
+
+/* ── UV Gauge ─────────────────────────────── */
+.uv-gauge {
+  display: flex;
+  gap: 3px;
+  height: 5px;
+  width: 100%;
+}
+
+.gauge-seg {
+  flex: 1;
+  border-radius: 99px;
+  opacity: 0.28;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.gauge-seg--active {
+  opacity: 1;
+  transform: scaleY(1.5);
+  transform-origin: center;
+}
+
+/* ── UV Alert Banner ──────────────────────── */
+.uv-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.22);
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 0.82rem;
+  color: #fff;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.uv-alert__icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.uv-alert__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.uv-alert__burn-time {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.05rem;
+  display: block;
+  color: #fff;
+}
+
+.uv-alert__message {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.5;
+}

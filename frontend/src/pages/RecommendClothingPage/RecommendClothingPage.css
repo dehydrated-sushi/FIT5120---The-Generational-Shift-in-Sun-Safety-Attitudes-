@@ -1,0 +1,306 @@
+/* pages/RecommendClothing/RecommendClothingPage.css */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ── Root ────────────────────────────────── */
+.recommend-root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-family: 'DM Sans', sans-serif;
+  color: #e8edf5;
+  overflow: hidden;
+}
+
+/* ── Scrollable content ──────────────────── */
+.recommend-scroll {
+  position: absolute;      
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;               
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 20px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scrollbar-width: none;
+  box-sizing: border-box;
+}
+.recommend-scroll::-webkit-scrollbar { display: none; }
+
+/* ── Header ──────────────────────────────── */
+.recommend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.recommend-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.recommend-page-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-family: 'Syne', sans-serif;
+}
+.recommend-title {
+  margin: 0;
+  font-family: 'Syne', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.recommend-location-tag {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.78rem;
+  color: rgba(232, 237, 245, 0.75);
+  white-space: nowrap;
+}
+
+/* ── UV summary card ─────────────────────── */
+.recommend-uv-card {
+  flex-shrink: 0;
+  border-radius: 28px;
+  border: 1px solid transparent;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: background 0.6s ease, box-shadow 0.6s ease;
+}
+.recommend-uv-badge {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+.recommend-uv-badge__number {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+.recommend-uv-badge__label {
+  font-size: 0.52rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.recommend-uv-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.recommend-uv-level {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+}
+.recommend-uv-msg {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.45;
+}
+
+/* UV level colour variants — matches Home.jsx uvLevel colours */
+.recommend-uv-card.low {
+  background: rgba(74, 222, 128, 0.15);
+  border-color: rgba(74, 222, 128, 0.35);
+  box-shadow: 0 8px 32px rgba(74, 222, 128, 0.12);
+}
+.recommend-uv-card.low .recommend-uv-badge {
+  background: rgba(74, 222, 128, 0.28);
+  border: 1.5px solid #4ade80;
+}
+.recommend-uv-card.moderate {
+  background: rgba(250, 204, 21, 0.13);
+  border-color: rgba(250, 204, 21, 0.35);
+  box-shadow: 0 8px 32px rgba(250, 204, 21, 0.12);
+}
+.recommend-uv-card.moderate .recommend-uv-badge {
+  background: rgba(250, 204, 21, 0.28);
+  border: 1.5px solid #facc15;
+}
+.recommend-uv-card.high {
+  background: rgba(251, 146, 60, 0.13);
+  border-color: rgba(251, 146, 60, 0.35);
+  box-shadow: 0 8px 32px rgba(251, 146, 60, 0.12);
+}
+.recommend-uv-card.high .recommend-uv-badge {
+  background: rgba(251, 146, 60, 0.28);
+  border: 1.5px solid #fb923c;
+}
+.recommend-uv-card.very-high {
+  background: rgba(248, 113, 113, 0.13);
+  border-color: rgba(248, 113, 113, 0.35);
+  box-shadow: 0 8px 32px rgba(248, 113, 113, 0.12);
+}
+.recommend-uv-card.very-high .recommend-uv-badge {
+  background: rgba(248, 113, 113, 0.28);
+  border: 1.5px solid #f87171;
+}
+.recommend-uv-card.extreme {
+  background: rgba(192, 132, 252, 0.13);
+  border-color: rgba(192, 132, 252, 0.35);
+  box-shadow: 0 8px 32px rgba(192, 132, 252, 0.12);
+}
+.recommend-uv-card.extreme .recommend-uv-badge {
+  background: rgba(192, 132, 252, 0.28);
+  border: 1.5px solid #c084fc;
+}
+
+/* ── Clothing section ────────────────────── */
+.recommend-clothing-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.clothing-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+.clothing-item__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.clothing-item__name {
+  font-size: 0.88rem;
+  color: rgba(241, 245, 249, 0.9);
+  font-weight: 500;
+}
+
+/* ── Info cards (comfort + style) ────────── */
+.recommend-info-card {
+  background: rgba(20, 25, 40, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.recommend-info-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.recommend-info-card__icon-wrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.recommend-info-card__icon-wrap--comfort {
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+}
+.recommend-info-card__icon-wrap--style {
+  background: linear-gradient(135deg, #f472b6, #ec4899);
+}
+.recommend-info-card__title {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+}
+.recommend-info-card__body {
+  font-size: 0.8rem;
+  color: rgba(241, 245, 249, 0.75);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Section label ───────────────────────── */
+.recommend-section-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* ── Footer ──────────────────────────────── */
+.recommend-footer {
+  text-align: center;
+  font-size: 0.72rem;
+  color: rgba(232, 237, 245, 0.22);
+  margin: 0;
+  letter-spacing: 0.03em;
+}
+
+/* ── Empty state ─────────────────────────── */
+.recommend-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  text-align: center;
+  padding: 40px 32px;
+}
+.recommend-empty__icon { font-size: 3rem; }
+.recommend-empty__title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+}
+.recommend-empty__desc {
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.6;
+  margin: 0;
+}
+.recommend-empty__btn {
+  margin-top: 4px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 16px;
+  background: #fff;
+  color: #111;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.recommend-empty__btn:hover { opacity: 0.88; }

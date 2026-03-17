@@ -1,131 +1,130 @@
-import { useMemo, useState } from "react";
-import useUVData from "../../hooks/useUVData";
-import "./UVTracker.css";
+import { useState, useEffect } from 'react';
+import { getUVAlert } from '../../services/uvService';
+import { DEFAULT_LAT, DEFAULT_LON } from '../../constants/defaults';
+import './UVTracker.css';
 
-function getUVLabel(uv) {
-  if (uv <= 2) return "LOW";
-  if (uv <= 5) return "MODERATE";
-  if (uv <= 7) return "HIGH";
-  if (uv <= 10) return "VERY HIGH";
-  return "EXTREME";
-}
-
-function getBackgroundClass(level) {
-  switch (level) {
-    case "LOW":
-      return "bg-low";
-    case "MODERATE":
-      return "bg-moderate";
-    case "HIGH":
-      return "bg-high";
-    case "VERY HIGH":
-      return "bg-very-high";
-    case "EXTREME":
-      return "bg-extreme";
-    default:
-      return "bg-moderate";
-  }
-}
-
-function getGaugeAngle(uv) {
-  const capped = Math.min(uv, 12);
-  return (capped / 12) * 360;
+function getUVLevel(uv) {
+  if (uv <= 2) return { label: 'Low', className: 'low' };
+  if (uv <= 5) return { label: 'Moderate', className: 'moderate' };
+  if (uv <= 7) return { label: 'High', className: 'high' };
+  if (uv <= 10) return { label: 'Very High', className: 'very-high' };
+  return { label: 'Extreme', className: 'extreme' };
 }
 
 export default function UVTracker() {
-  const { uvData, city, loading, error } = useUVData();
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [uvData, setUvData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const selectedItem = useMemo(() => {
-    if (!uvData.length) return null;
-    return uvData[selectedIndex] || uvData[0];
-  }, [uvData, selectedIndex]);
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchData = async (lat, lon) => {
+      try {
+        const data = await getUVAlert(lat, lon);
+        if (!cancelled) setUvData(data);
+      } catch (err) {
+        if (!cancelled) setError(err.message);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => fetchData(pos.coords.latitude, pos.coords.longitude),
+        () => fetchData(DEFAULT_LAT, DEFAULT_LON),
+        { timeout: 8000 },
+      );
+    } else {
+      fetchData(DEFAULT_LAT, DEFAULT_LON);
+    }
+
+    return () => { cancelled = true; };
+  }, []);
 
   if (loading) {
-    return <div className="uv-page-status">Loading UV forecast...</div>;
+    return (
+      <div className="tracker-root">
+        <div className="tracker-card">
+          <p>Loading UV data...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="uv-page-status error">Error: {error}</div>;
+    return (
+      <div className="tracker-root">
+        <div className="tracker-card">
+          <p>Failed to load UV data: {error}</p>
+        </div>
+      </div>
+    );
   }
 
-  if (!selectedItem) {
-    return <div className="uv-page-status">No UV data available.</div>;
-  }
-
-  const level = getUVLabel(selectedItem.uv);
-  const bgClass = getBackgroundClass(level);
-  const angle = getGaugeAngle(selectedItem.uv);
+  const current = uvData.current;
+  const forecast = uvData.forecast || [];
+  const uvLevel = getUVLevel(current.uv);
 
   return (
-    <div className={`uv-page ${bgClass}`}>
-      <section className="uv-hero">
-        <h1 className="uv-level-title">{level}</h1>
-        <p className="uv-weather-text">
-          {selectedItem.weather ? selectedItem.weather : "Clear"}
-        </p>
-        <p className="uv-location-text">{city || "Melbourne"}</p>
-      </section>
-
-      <section className="uv-time-slider-section">
-        <div className="uv-time-slider">
-          {uvData.map((item, index) => (
-            <button
-              key={`${item.time}-${index}`}
-              className={`uv-time-pill ${
-                selectedIndex === index ? "active" : ""
-              }`}
-              onClick={() => setSelectedIndex(index)}
-            >
-              <span className="uv-time-pill-time">{item.time}</span>
-              <span className="uv-time-pill-value">{item.uv}</span>
-            </button>
-          ))}
+    <div className="tracker-root">
+      <div className="tracker-card">
+        <div className="tracker-header">
+          <h1 className="tracker-title">UV Tracker</h1>
+          <p className="tracker-subtitle">
+            Real-time UV index and weather outlook for your location.
+          </p>
         </div>
-      </section>
 
-      <section className="uv-gauge-section">
-        <div
-          className="uv-gauge-ring"
-          style={{
-            background: `conic-gradient(
-              #35b000 0deg 72deg,
-              #f1d000 72deg 144deg,
-              #ff9800 144deg 216deg,
-              #e53935 216deg 288deg,
-              #8e24aa 288deg 360deg
-            )`,
-          }}
-        >
-          <div className="uv-gauge-inner">
-            <div className="uv-gauge-value">{selectedItem.uv}</div>
-            <div className="uv-gauge-level">{level}</div>
-            <div className="uv-gauge-weather">{selectedItem.weather}</div>
-            <div className="uv-gauge-temp">{selectedItem.temp}°C</div>
+        <div className={`tracker-current ${uvLevel.className}`}>
+          <p><strong>Current UV Index:</strong> {current.uv}</p>
+          <p><strong>Risk Level:</strong> {current.level}</p>
+          <p><strong>Temperature:</strong> {current.temp}°C</p>
+          <p><strong>Conditions:</strong> {current.weather}</p>
+        </div>
+
+        {!current.is_daytime ? (
+          <div className="tracker-section tracker-soft">
+            <h2>Night Mode</h2>
+            <p>{current.uv_note}</p>
           </div>
-
-          <div
-            className="uv-gauge-pointer"
-            style={{ transform: `rotate(${angle}deg)` }}
-          >
-            <div className="uv-gauge-pointer-dot" />
+        ) : (
+          <div className="tracker-section tracker-soft">
+            <h2>Safety Advice</h2>
+            <p>
+              When UV is high or very high, wear sunscreen, sunglasses, and a hat,
+              and try to stay in the shade.
+            </p>
           </div>
-        </div>
-      </section>
+        )}
 
-      <section className="uv-info-card">
-        <div className="uv-warning-row">
-          <span className="uv-warning-sign">{selectedItem.warning_sign}</span>
-          <p>{selectedItem.warning_message}</p>
-        </div>
+        {forecast.length > 0 && (
+          <div className="tracker-section">
+            <h2>Weather Forecast</h2>
+            <div className="tracker-chart">
+              {forecast.map((item) => (
+                <div className="tracker-bar-group" key={item.time}>
+                  <div
+                    className="tracker-bar"
+                    style={{ height: `${Math.max(item.temp * 4, 8)}px` }}
+                  ></div>
+                  <span className="tracker-bar-value">{Math.round(item.temp)}°C</span>
+                  <span className="tracker-bar-time">{item.time}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-        <h3>Recommended clothing</h3>
-        <ul className="uv-clothing-list">
-          {selectedItem.clothing.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
-      </section>
+        <div className="tracker-section tracker-soft">
+          <h2>About UV Levels</h2>
+          <p>
+            UV levels are highest around midday and early afternoon. Plan outdoor
+            activities earlier in the morning or later in the evening where possible.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
