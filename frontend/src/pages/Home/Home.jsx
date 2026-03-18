@@ -7,7 +7,6 @@ import './Home.css';
 import '../../components/UVAlert/UVAlert.css';
 import { geocode, fetchWeather } from '../../services/weatherAPI';
 import { getUVAlert } from '../../services/uvService';
-import { useNavigate } from 'react-router-dom';
 
 // ── UV level config ───────────────────────────────────────────
 /*const HOURLY_MOCK = [
@@ -295,7 +294,6 @@ export default function Home() {
   const [time, setTime] = useState(new Date());
   const [revealed, setRevealed] = useState(false);
   const [stale, setStale] = useState(false);
-  const navigate = useNavigate();
 
   const canvasRef = useRef(null);
   const weatherMode = weather ? getWeatherMode(weather.condition) : 'neutral';
@@ -479,12 +477,6 @@ export default function Home() {
                     {time.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' })}
                   </span>
                 </div>
-                <button
-                  onClick={() => navigate('/settings')}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.3rem', padding: '4px' }}
-                >
-                  ⚙️
-                </button>
               </div>
             </header>
 

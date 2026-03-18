@@ -1,19 +1,18 @@
-// pages/UserSetting/UserSetting.jsx
 import { useState } from 'react';
 import './UserSetting.css';
 
 export default function UserSetting() {
-  const [name, setName] = useState('Zedong');
-  const [location, setLocation] = useState('Use current location');
-  const [temperatureUnit, setTemperatureUnit] = useState('Celsius');
-  const [uvNotification, setUvNotification] = useState(true);
-  const [darkMode, setDarkMode] = useState(true);
+  const savedData = JSON.parse(localStorage.getItem('userSettings') || '{}');
+
+  const [name, setName] = useState(savedData.name || '');
+  const [location, setLocation] = useState(savedData.location || 'Use current location');
+  const [skinType, setSkinType] = useState(savedData.skinType || '');
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
     setSaved(true);
     localStorage.setItem('userSettings', JSON.stringify({
-      name, location, temperatureUnit, uvNotification, darkMode,
+      name, location, skinType,
     }));
     setTimeout(() => setSaved(false), 2000);
   };
@@ -56,53 +55,28 @@ export default function UserSetting() {
           </select>
         </div>
 
-        {/* ── Units ── */}
-        <p className="setting-section-label">Units</p>
+        {/* ── Skin Type ── */}
+        <p className="setting-section-label">Skin Type</p>
         <div className="setting-field">
-          <label className="setting-label">Temperature Unit</label>
-          <select
-            className="setting-input"
-            value={temperatureUnit}
-            onChange={(e) => setTemperatureUnit(e.target.value)}
-          >
-            <option>Celsius</option>
-            <option>Fahrenheit</option>
-          </select>
+            <label className="setting-label">Your Skin Type</label>
+            <select
+                className="setting-input"
+                value={skinType}
+                onChange={(e) => setSkinType(e.target.value)}
+            >
+                <option value="">Select skin type</option>
+                <option value="1">Type I – Very Fair</option>
+                <option value="2">Type II – Fair</option>
+                <option value="3">Type III – Medium</option>
+                <option value="4">Type IV – Olive</option>
+                <option value="5">Type V – Brown</option>
+                <option value="6">Type VI – Dark</option>
+            </select>
         </div>
 
-        {/* ── Notifications ── */}
-        <p className="setting-section-label">Notifications</p>
-        <div className="setting-toggle">
-          <div className="toggle-text">
-            <p className="toggle-title">UV Alert Notifications</p>
-            <p className="toggle-desc">Get reminders when UV levels become dangerous.</p>
-          </div>
-          <label className="toggle-switch">
-            <input
-              type="checkbox"
-              checked={uvNotification}
-              onChange={() => setUvNotification(!uvNotification)}
-            />
-            <span className="toggle-slider" />
-          </label>
-        </div>
+        
 
-        {/* ── Display ── */}
-        <p className="setting-section-label">Display</p>
-        <div className="setting-toggle">
-          <div className="toggle-text">
-            <p className="toggle-title">Dark Mode</p>
-            <p className="toggle-desc">Use a darker interface for comfortable viewing.</p>
-          </div>
-          <label className="toggle-switch">
-            <input
-              type="checkbox"
-              checked={darkMode}
-              onChange={() => setDarkMode(!darkMode)}
-            />
-            <span className="toggle-slider" />
-          </label>
-        </div>
+        
 
         {/* ── Save ── */}
         <button className="setting-btn" onClick={handleSave}>

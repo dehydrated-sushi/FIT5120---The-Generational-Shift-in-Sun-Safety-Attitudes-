@@ -5,7 +5,6 @@ import UserSetting from './pages/UserSetting/UserSetting'
 import RecommendClothingPage from './pages/RecommendClothingPage/RecommendClothingPage'
 import { UVProvider } from './context/UVContext'
 import Awareness from './pages/Awareness/Awareness'
-import UVTracker from './pages/UVTracker/UVTracker'
 import Login from './pages/Login/Login'
 import './App.css'
 
@@ -25,9 +24,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><UserSetting /></ProtectedRoute>} />
-          <Route path="/prevention" element={<ProtectedRoute><RecommendClothingPage /></ProtectedRoute>} />
+          <Route path="/clothing" element={<ProtectedRoute><RecommendClothingPage /></ProtectedRoute>} />
           <Route path="/awareness" element={<ProtectedRoute><Awareness /></ProtectedRoute>} />
-          <Route path="/uv-tracker" element={<ProtectedRoute><UVTracker /></ProtectedRoute>} />
           <Route path="/login" element={<Login />} />
         </Routes>
         {!hideNavbar && <Navbar />}

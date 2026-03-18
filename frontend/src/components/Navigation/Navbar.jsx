@@ -4,9 +4,9 @@ import './Navbar.css';
 
 const NAV_ITEMS = [
   { to: '/',           icon: '🏠', label: 'Home'    },
-  { to: '/uv-tracker', icon: '📍', label: 'UV Map'  },
-  { to: '/prevention', icon: '👕', label: 'Outfit'  },
+  { to: '/clothing', icon: '👕', label: 'Outfit'  },
   { to: '/awareness',  icon: '📊', label: 'Stats'   },
+  { to: '/settings', icon: '⚙️', label: 'You' },
 ];
 
 export default function Navbar() {
