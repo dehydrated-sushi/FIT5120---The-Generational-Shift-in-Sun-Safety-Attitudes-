@@ -288,19 +288,25 @@ const MOCK_WEATHER = {
 // ── Home component ────────────────────────────────────────────
 export default function Home() {
   // Screen state: 'permission' | 'manual' | 'loading' | 'data' | 'error'
-  const [screen, setScreen]     = useState('permission');
   const { weather, setWeather } = useWeather();
-  const [query, setQuery]       = useState('');
+  const [screen, setScreen] = useState(weather ? 'data' : 'permission');
+  const [query, setQuery] = useState('');
   const [inputError, setInputError] = useState('');
-  const [time, setTime]         = useState(new Date());
+  const [time, setTime] = useState(new Date());
   const [revealed, setRevealed] = useState(false);
-  const [stale, setStale]       = useState(false);
+  const [stale, setStale] = useState(false);
   const navigate = useNavigate();
 
   const canvasRef = useRef(null);
   const weatherMode = weather ? getWeatherMode(weather.condition) : 'neutral';
 
   useWeatherCanvas(canvasRef, weatherMode);
+
+  useEffect(() => {
+    if (weather) {
+      setScreen('data');
+    }
+  }, [weather]);
 
   // Clock
   useEffect(() => {
@@ -326,64 +332,64 @@ export default function Home() {
 
   // AC1 — Request geolocation
   const requestLocation = () => {
-  if (!navigator.geolocation) {
-    setScreen('manual');
-    return;
-  }
-  setScreen('loading');
-  navigator.geolocation.getCurrentPosition(
-    async (pos) => {
-      try {
-        const [data, uvData] = await Promise.all([
-          fetchWeather(pos.coords.latitude, pos.coords.longitude),
-          getUVAlert(pos.coords.latitude, pos.coords.longitude),
-        ]);
-        setWeather({ ...data, uvIndex: uvData?.current?.uv ?? data.uvIndex, location: 'Current Location' });
-        setScreen('data');
-      } catch {
-        setScreen('manual');
-      }
-    },
-    async (_err) => {
-      // IP location
-      try {
-        const res = await fetch('https://ipapi.co/json/');
-        const ip = await res.json();
-        const [data, uvData] = await Promise.all([
-          fetchWeather(ip.latitude, ip.longitude),
-          getUVAlert(ip.latitude, ip.longitude),
-        ]);
-        setWeather({ ...data, uvIndex: uvData?.current?.uv ?? data.uvIndex, location: ip.city });
-        setScreen('data');
-      } catch {
-        setScreen('manual');
-      }
-    },
-    { timeout: 8000 }
-  );
-};
+    if (!navigator.geolocation) {
+      setScreen('manual');
+      return;
+    }
+    setScreen('loading');
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const [data, uvData] = await Promise.all([
+            fetchWeather(pos.coords.latitude, pos.coords.longitude),
+            getUVAlert(pos.coords.latitude, pos.coords.longitude),
+          ]);
+          setWeather({ ...data, uvIndex: uvData?.current?.uv ?? data.uvIndex, location: 'Current Location' });
+          setScreen('data');
+        } catch {
+          setScreen('manual');
+        }
+      },
+      async (_err) => {
+        // IP location
+        try {
+          const res = await fetch('https://ipapi.co/json/');
+          const ip = await res.json();
+          const [data, uvData] = await Promise.all([
+            fetchWeather(ip.latitude, ip.longitude),
+            getUVAlert(ip.latitude, ip.longitude),
+          ]);
+          setWeather({ ...data, uvIndex: uvData?.current?.uv ?? data.uvIndex, location: ip.city });
+          setScreen('data');
+        } catch {
+          setScreen('manual');
+        }
+      },
+      { timeout: 8000 }
+    );
+  };
 
   // AC1 — Manual suburb / postcode search
   const handleSearch = async (e) => {
-  e.preventDefault();
-  const q = query.trim();
-  if (!q) return;
-  setInputError('');
-  setScreen('loading');
-  try {
-    const { lat, lon, name } = await geocode(q);
-    const [data, uvData] = await Promise.all([
-      fetchWeather(lat, lon),
-      getUVAlert(lat, lon),
-    ]);
-    setWeather({ ...data, uvIndex: uvData?.current?.uv ?? data.uvIndex, location: name });
-    setStale(false);
-    setScreen('data');
-  } catch {
-    setScreen('error');
-    setInputError('Location not recognised. Please try a valid suburb or postcode.');
-  }
-};
+    e.preventDefault();
+    const q = query.trim();
+    if (!q) return;
+    setInputError('');
+    setScreen('loading');
+    try {
+      const { lat, lon, name } = await geocode(q);
+      const [data, uvData] = await Promise.all([
+        fetchWeather(lat, lon),
+        getUVAlert(lat, lon),
+      ]);
+      setWeather({ ...data, uvIndex: uvData?.current?.uv ?? data.uvIndex, location: name });
+      setStale(false);
+      setScreen('data');
+    } catch {
+      setScreen('error');
+      setInputError('Location not recognised. Please try a valid suburb or postcode.');
+    }
+  };
 
   // AC2 — Refresh
   const handleRefresh = () => {
@@ -395,7 +401,7 @@ export default function Home() {
     }, 1000);
   };
 
-  const uvLevel  = weather ? getUVLevel(weather.uvIndex) : null;
+  const uvLevel = weather ? getUVLevel(weather.uvIndex) : null;
   const tips = weather ? generateTips(weather.uvIndex, weather.temperature, weather.condition) : [];
 
   return (
@@ -460,7 +466,6 @@ export default function Home() {
       {screen === 'data' && weather && (
         <div className="home-screen">
           <div className="home-scroll">
-
             {/* Top bar */}
             <header className="home-header">
               <div className="header-brand">
@@ -478,7 +483,7 @@ export default function Home() {
                   onClick={() => navigate('/settings')}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.3rem', padding: '4px' }}
                 >
-                   ⚙️
+                  ⚙️
                 </button>
               </div>
             </header>
@@ -608,8 +613,6 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      
     </div>
   );
 }
