@@ -11,6 +11,8 @@ import psycopg2.extras
 
 clothing_bp = Blueprint("clothing", __name__)
 
+VALID_SKIN_TYPES = {"I", "II", "III", "IV", "V", "VI"}
+
 
 def _get_db_connection():
     """Create a database connection using DATABASE_URL from app config.
@@ -30,6 +32,7 @@ def get_clothing():
 
     Query Parameters:
         uv_index (float): The current UV index value. Required.
+        skin_type (str): Optional Fitzpatrick skin type (I-VI).
 
     Returns:
         JSON response with a list of clothing recommendation objects,
@@ -42,6 +45,7 @@ def get_clothing():
         500: Database error.
     """
     uv_index_param = request.args.get("uv_index")
+    skin_type = request.args.get("skin_type")
 
     if uv_index_param is None:
         return jsonify({"error": "uv_index query parameter is required"}), 400
@@ -50,6 +54,13 @@ def get_clothing():
         uv_index = float(uv_index_param)
     except (ValueError, TypeError):
         return jsonify({"error": "uv_index must be a valid number"}), 400
+
+    if skin_type is not None:
+        skin_type = skin_type.strip().upper()
+        if skin_type not in VALID_SKIN_TYPES:
+            return jsonify({
+                "error": "skin_type must be one of I, II, III, IV, V, VI"
+            }), 400
 
     try:
         conn = _get_db_connection()
@@ -70,7 +81,15 @@ def get_clothing():
         cur.close()
         conn.close()
 
-        return jsonify({"uv_index": uv_index, "recommendations": rows}), 200
+        response = {
+            "uv_index": uv_index,
+            "recommendations": rows,
+        }
+
+        if skin_type is not None:
+            response["skin_type"] = skin_type
+
+        return jsonify(response), 200
 
     except psycopg2.Error as e:
         return jsonify({"error": "Database error", "details": str(e)}), 500
