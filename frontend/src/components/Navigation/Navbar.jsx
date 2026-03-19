@@ -6,7 +6,6 @@ const NAV_ITEMS = [
   { to: '/',           icon: '🏠', label: 'Home'    },
   { to: '/clothing', icon: '👕', label: 'Outfit'  },
   { to: '/awareness',  icon: '📊', label: 'Stats'   },
-  { to: '/settings', icon: '⚙️', label: 'You' },
 ];
 
 export default function Navbar() {
