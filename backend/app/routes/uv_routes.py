@@ -171,8 +171,8 @@ def get_uv_forecast():
 
         current = {
             "time": current_time_iso,
-            "uv": current_uv,
-            "uv_raw": raw_uv,
+            "uv": round(current_uv),
+            "uv_raw": round(raw_uv),
             "uv_estimated": not is_daytime,
             "is_daytime": is_daytime,
             "level": current_details["level"],
